@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ticket Verification - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F59E0B',
+                        secondary: '#10B981'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            background-color: #F8F6F0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .scan-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .scan-button:active {
+            transform: translateY(0);
+        }
+
+        .status-card {
+            transition: all 0.4s ease;
+            transform: translateY(10px);
+            opacity: 0;
+        }
+
+        .status-card.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        #camera-preview {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .verification-success {
+            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+            border: 2px solid #10B981;
+        }
+
+        .verification-error {
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            border: 2px solid #EF4444;
+        }
+
+        .verification-scanning {
+            background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+            border: 2px solid #3B82F6;
+        }
+        @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-md mx-auto px-4 py-6">
+                <div class="text-center">
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">Ticket Verification</h1>
+                    <p class="text-sm text-gray-600">Admin Panel - Scan QR codes to verify tickets</p>
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 flex flex-col items-center justify-center px-4 py-8">
+            <div class="w-full max-w-md space-y-6">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                        <i class="ri-qr-scan-2-line text-3xl text-primary"></i>
+                    </div>
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Ready to Scan</h2>
+                    <p class="text-gray-600 text-sm">Tap the button below to start scanning QR codes</p>
+                </div>
+                <div class="text-center">
+                    <button
+                        class="scan-button bg-primary hover:bg-primary/90 text-white font-semibold py-4 px-8 !rounded-button whitespace-nowrap w-full max-w-xs mx-auto flex items-center justify-center gap-3 text-lg"
+                        id="scanButton">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-camera-line text-xl"></i>
+                        </div>
+                        Scan QR Code
+                    </button>
+                </div>
+                <div class="hidden" id="cameraContainer">
+                    <div class="bg-white rounded-lg p-4 shadow-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Camera Scanner</h3>
+                            <button
+                                class="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-gray-200 !rounded-button"
+                                id="closeCameraButton">
+                                <i class="ri-close-line text-gray-600"></i>
+                            </button>
+                        </div>
+                        <div class="w-full h-64 bg-gray-900 flex items-center justify-center" id="camera-preview">
+                            <div class="text-white text-center">
+                                <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
+                                    <i class="ri-camera-line text-2xl pulse-animation"></i>
+                                </div>
+                                <p class="text-sm">Position QR code within the frame</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 !rounded-button whitespace-nowrap text-sm"
+                                id="simulateScanButton">
+                                Simulate Scan (Demo)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-card" id="statusContainer">
+                    <div class="rounded-lg p-6 text-center hidden" id="statusCard">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
+                            id="statusIcon">
+                            <i class="text-2xl" id="statusIconElement"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2" id="statusTitle"></h3>
+                        <p class="text-sm mb-4" id="statusMessage"></p>
+                        <div class="bg-white/50 rounded p-4 text-left text-sm space-y-2 hidden" id="ticketDetails">
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-700">Ticket ID:</span>
+                                <span class="text-gray-900" id="ticketId"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-700">Event:</span>
+                                <span class="text-gray-900" id="eventName"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-700">Date:</span>
+                                <span class="text-gray-900" id="eventDate"></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="font-medium text-gray-700">Holder:</span>
+                                <span class="text-gray-900" id="ticketHolder"></span>
+                            </div>
+                        </div>
+                        <button
+                            class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 !rounded-button whitespace-nowrap mt-4"
+                            id="scanAgainButton">
+                            Scan Another Ticket
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                    <h3 class="font-semibold text-gray-900 mb-3 text-center">Recent Scans</h3>
+                    <div class="space-y-2" id="recentScans">
+                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full">
+                                    <i class="ri-check-line text-green-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">TK-2024-001</p>
+                                    <p class="text-xs text-gray-500">2 minutes ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-green-600 font-medium">Valid</span>
+                        </div>
+                        <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
+                            <div class="flex items-center gap-3">
+                                <div class="w-6 h-6 flex items-center justify-center bg-red-100 rounded-full">
+                                    <i class="ri-close-line text-red-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">TK-2024-002</p>
+                                    <p class="text-xs text-gray-500">5 minutes ago</p>
+                                </div>
+                            </div>
+                            <span class="text-xs text-red-600 font-medium">Invalid</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script id="camera-scanner">
+        document.addEventListener('DOMContentLoaded', function () {
+            const scanButton = document.getElementById('scanButton');
+            const cameraContainer = document.getElementById('cameraContainer');
+            const closeCameraButton = document.getElementById('closeCameraButton');
+            const simulateScanButton = document.getElementById('simulateScanButton');
+
+            scanButton.addEventListener('click', function () {
+                cameraContainer.classList.remove('hidden');
+                scanButton.style.display = 'none';
+            });
+
+            closeCameraButton.addEventListener('click', function () {
+                cameraContainer.classList.add('hidden');
+                scanButton.style.display = 'flex';
+            });
+
+            simulateScanButton.addEventListener('click', function () {
+                const isValid = Math.random() > 0.3;
+                showVerificationResult(isValid);
+                cameraContainer.classList.add('hidden');
+                scanButton.style.display = 'flex';
+            });
+        });
+    </script>
+    <script id="verification-display">
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusContainer = document.getElementById('statusContainer');
+            const statusCard = document.getElementById('statusCard');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusIconElement = document.getElementById('statusIconElement');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+            const ticketDetails = document.getElementById('ticketDetails');
+            const scanAgainButton = document.getElementById('scanAgainButton');
+
+            window.showVerificationResult = function (isValid) {
+                const ticketData = generateTicketData(isValid);
+
+                statusCard.className = 'rounded-lg p-6 text-center';
+
+                if (isValid) {
+                    statusCard.classList.add('verification-success');
+                    statusIcon.className = 'w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-green-500';
+                    statusIconElement.className = 'ri-check-line text-2xl text-white';
+                    statusTitle.textContent = 'Ticket Verified!';
+                    statusTitle.className = 'text-xl font-semibold mb-2 text-green-800';
+                    statusMessage.textContent = 'This ticket is valid and can be used for entry.';
+                    statusMessage.className = 'text-sm mb-4 text-green-700';
+
+                    document.getElementById('ticketId').textContent = ticketData.id;
+                    document.getElementById('eventName').textContent = ticketData.event;
+                    document.getElementById('eventDate').textContent = ticketData.date;
+                    document.getElementById('ticketHolder').textContent = ticketData.holder;
+                    ticketDetails.classList.remove('hidden');
+                } else {
+                    statusCard.classList.add('verification-error');
+                    statusIcon.className = 'w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-red-500';
+                    statusIconElement.className = 'ri-close-line text-2xl text-white';
+                    statusTitle.textContent = 'Invalid Ticket';
+                    statusTitle.className = 'text-xl font-semibold mb-2 text-red-800';
+                    statusMessage.textContent = 'This ticket is not valid. Please check with the ticket holder.';
+                    statusMessage.className = 'text-sm mb-4 text-red-700';
+                    ticketDetails.classList.add('hidden');
+                }
+
+                statusCard.classList.remove('hidden');
+                statusContainer.classList.add('show');
+
+                addToRecentScans(ticketData, isValid);
+            };
+
+            scanAgainButton.addEventListener('click', function () {
+                statusContainer.classList.remove('show');
+                setTimeout(() => {
+                    statusCard.classList.add('hidden');
+                }, 400);
+            });
+        });
+    </script>
+    <script id="ticket-data-generator">
+        document.addEventListener('DOMContentLoaded', function () {
+            const events = [
+                'Summer Music Festival 2024',
+                'Tech Conference Pro',
+                'Art Gallery Opening',
+                'Comedy Night Special',
+                'Food & Wine Expo'
+            ];
+
+            const names = [
+                'Alex Johnson', 'Sarah Chen', 'Michael Rodriguez', 'Emma Thompson',
+                'David Kim', 'Lisa Anderson', 'James Wilson', 'Maria Garcia'
+            ];
+
+            window.generateTicketData = function (isValid) {
+                const now = new Date();
+                const eventDate = new Date(now.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000);
+
+                return {
+                    id: isValid ? `TK-2024-${String(Math.floor(Math.random() * 9999)).padStart(3, '0')}` : 'INVALID',
+                    event: events[Math.floor(Math.random() * events.length)],
+                    date: eventDate.toLocaleDateString('en-US', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    }),
+                    holder: names[Math.floor(Math.random() * names.length)]
+                };
+            };
+
+            window.addToRecentScans = function (ticketData, isValid) {
+                const recentScans = document.getElementById('recentScans');
+                const now = new Date();
+
+                const scanItem = document.createElement('div');
+                scanItem.className = 'flex items-center justify-between py-2 px-3 bg-gray-50 rounded';
+
+                const iconClass = isValid ? 'ri-check-line text-green-600' : 'ri-close-line text-red-600';
+                const iconBg = isValid ? 'bg-green-100' : 'bg-red-100';
+                const statusText = isValid ? 'Valid' : 'Invalid';
+                const statusColor = isValid ? 'text-green-600' : 'text-red-600';
+
+                scanItem.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-6 h-6 flex items-center justify-center ${iconBg} rounded-full">
+                            <i class="${iconClass} text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">${ticketData.id}</p>
+                            <p class="text-xs text-gray-500">Just now</p>
+                        </div>
+                    </div>
+                    <span class="text-xs ${statusColor} font-medium">${statusText}</span>
+                `;
+
+                recentScans.insertBefore(scanItem, recentScans.firstChild);
+
+                if (recentScans.children.length > 5) {
+                    recentScans.removeChild(recentScans.lastChild);
+                }
+            };
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'MBki4FJUnXd5UggVDGLlBg';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

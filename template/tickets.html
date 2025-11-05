@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+        @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B5CF6',
+                        secondary: '#EC4899'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-4">
+    <div class="max-w-sm mx-auto">
+        <div
+            class="bg-white rounded-2xl shadow-2xl overflow-hidden transform rotate-1 hover:rotate-0 transition-transform duration-300">
+            <div class="bg-gradient-to-r from-primary to-secondary p-4 relative">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full -mr-8 -mt-8"></div>
+                <div class="absolute bottom-0 left-0 w-12 h-12 bg-white/10 rounded-full -ml-6 -mb-6"></div>
+                <div class="relative z-10">
+                    <div class="text-white text-xs font-semibold mb-1 tracking-wide">COMPANY PRESENTING</div>
+                    <h1 class="text-white text-xl font-bold mb-2">Trendy Ticket Service</h1>
+                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-2 mb-2">
+                        <div class="text-white text-base font-bold">EVENT TICKET</div>
+                        <div class="text-white/90 text-xs">YOUR ENTRY PASS</div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-gray-50 rounded-lg p-2">
+                        <div class="text-xs text-gray-500 mb-1">NAME</div>
+                        <div class="font-semibold text-gray-900 text-sm">Youraj</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-2">
+                        <div class="text-xs text-gray-500 mb-1">STATUS</div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                            <span class="text-green-600 font-semibold text-xs">Valid</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-2">
+                    <div class="text-xs text-gray-500 mb-1">EMAIL</div>
+                    <div class="font-medium text-gray-900 text-xs">abc@gmail.com</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-2">
+                    <div class="text-xs text-gray-500 mb-1">CONTACT</div>
+                    <div class="font-medium text-gray-900 text-sm">+1 (555) 123-4567</div>
+                </div>
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-3 text-center">
+                    <div
+                        class="w-24 h-24 mx-auto mb-2 bg-white rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                        <div class="text-center">
+                            <div class="w-5 h-5 flex items-center justify-center mx-auto mb-1">
+                                <i class="ri-qr-code-line text-lg text-gray-400"></i>
+                            </div>
+                            <div class="text-xs text-gray-400">QR CODE</div>
+                        </div>
+                    </div>
+                    <div class="text-xs font-medium text-gray-700">Scan this QR for ticket ID</div>
+                </div>
+                <div class="border-t border-dashed border-gray-300 pt-3">
+                    <div class="flex items-start space-x-2">
+                        <div class="w-4 h-4 flex items-center justify-center mt-0.5">
+                            <i class="ri-information-line text-primary text-sm"></i>
+                        </div>
+                        <div class="text-xs text-gray-600 leading-relaxed">
+                            <strong>Information:</strong> Show this ticket at Event for entry. You can take screenshot
+                            of this.
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center pt-2">
+                    <div class="text-xs text-gray-400">
+                        TICKET #TTS-2024-001
+                    </div>
+                    <div class="flex space-x-1">
+                        <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                        <div class="w-1.5 h-1.5 bg-secondary rounded-full"></div>
+                        <div class="w-1.5 h-1.5 bg-orange-400 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-2 border-t border-dashed border-gray-200">
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                    <span>Valid until: Dec 31, 2024</span>
+                    <span>Mobile Ticket</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-6">
+            <div class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                <div class="w-4 h-4 flex items-center justify-center">
+                    <i class="ri-smartphone-line text-white text-sm"></i>
+                </div>
+                <span class="text-white text-sm font-medium">Mobile Optimized</span>
+            </div>
+        </div>
+    </div>
+    <script id="ticket-interactions">
+        document.addEventListener('DOMContentLoaded', function () {
+            const ticket = document.querySelector('.max-w-sm > div');
+            ticket.addEventListener('click', function () {
+                this.classList.toggle('scale-105');
+                setTimeout(() => {
+                    this.classList.remove('scale-105');
+                }, 200);
+            });
+            const statusElement = document.querySelector('.text-green-600');
+            const statusDot = document.querySelector('.bg-green-500');
+            let isValid = true;
+            statusElement.parentElement.addEventListener('click', function () {
+                isValid = !isValid;
+                if (isValid) {
+                    statusElement.textContent = 'Valid';
+                    statusElement.className = 'text-green-600 font-semibold text-sm';
+                    statusDot.className = 'w-2 h-2 bg-green-500 rounded-full mr-2';
+                } else {
+                    statusElement.textContent = 'Invalid';
+                    statusElement.className = 'text-red-600 font-semibold text-sm';
+                    statusDot.className = 'w-2 h-2 bg-red-500 rounded-full mr-2';
+                }
+            });
+        });
+    </script>
+    <script id="responsive-adjustments">
+        document.addEventListener('DOMContentLoaded', function () {
+            function adjustForScreenSize() {
+                const ticket = document.querySelector('.max-w-sm');
+                const screenWidth = window.innerWidth;
+                if (screenWidth < 380) {
+                    ticket.classList.add('max-w-xs');
+                    ticket.classList.remove('max-w-sm');
+                } else {
+                    ticket.classList.add('max-w-sm');
+                    ticket.classList.remove('max-w-xs');
+                }
+            }
+            adjustForScreenSize();
+            window.addEventListener('resize', adjustForScreenSize);
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'MBki4FJUnXd5UggVDGLlBg';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

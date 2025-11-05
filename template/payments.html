@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service - Payment Portal</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B47',
+                        secondary: '#8B6B47'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FFF8F0 0%, #FDF4E8 100%);
+            min-height: 100vh;
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #FF6B47;
+            box-shadow: 0 0 0 3px rgba(255, 107, 71, 0.1);
+        }
+
+        .step-card {
+            transition: transform 0.2s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .pay-button {
+            background: linear-gradient(135deg, #FF6B47 0%, #FF8A6B 100%);
+            transition: all 0.3s ease;
+        }
+
+        .pay-button:hover {
+            background: linear-gradient(135deg, #FF5A36 0%, #FF7A5A 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(255, 107, 71, 0.3);
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 40px rgba(139, 107, 71, 0.1);
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf) format('truetype');
+            }
+            @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+            }
+            @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+            }
+            @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+            }
+            @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
+            }
+            @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-orange-50 to-orange-100">
+    <div class="min-h-screen py-8 px-4">
+        <div class="max-w-md mx-auto">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-amber-900 mb-2 font-pacifico">Trendy Ticket Service</h1>
+                <p class="text-secondary text-lg">Your gateway to amazing events</p>
+            </div>
+            <div class="bg-white rounded-2xl p-8 custom-shadow mb-8">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-ticket-2-line text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-amber-900 mb-2">Secure Payment</h2>
+                    <p class="text-secondary">Complete your ticket purchase</p>
+                </div>
+                <form class="space-y-6">
+                    <div>
+                        <label class="block text-amber-900 font-medium mb-2" for="email">
+                            <div class="flex items-center gap-2">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="ri-mail-line text-secondary"></i>
+                                </div>
+                                Email Address
+                            </div>
+                        </label>
+                        <input
+                            class="form-input w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:outline-none text-amber-900 placeholder-orange-300"
+                            id="email" placeholder="Enter your email address" required="" type="email" />
+                    </div>
+                    <div>
+                        <label class="block text-amber-900 font-medium mb-2" for="phone">
+                            <div class="flex items-center gap-2">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="ri-phone-line text-secondary"></i>
+                                </div>
+                                Phone Number
+                            </div>
+                        </label>
+                        <input
+                            class="form-input w-full px-4 py-3 border-2 border-orange-200 rounded-lg focus:outline-none text-amber-900 placeholder-orange-300"
+                            id="phone" placeholder="Enter your phone number" required="" type="tel" />
+                    </div>
+                    <button
+                        class="pay-button w-full py-4 text-white font-bold text-lg rounded-button whitespace-nowrap flex items-center justify-center gap-3"
+                        type="submit">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-secure-payment-line text-xl"></i>
+                        </div>
+                        Pay $100
+                    </button>
+                </form>
+            </div>
+            <div class="bg-white rounded-2xl p-8 custom-shadow">
+                <h3 class="text-2xl font-bold text-amber-900 mb-6 text-center">How Trendy Ticket Service Works</h3>
+                <div class="space-y-4">
+                    <div class="step-card bg-orange-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-sm">1</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-amber-900 mb-1">Fill Your Details</h4>
+                            <p class="text-secondary text-sm">Enter your email address and phone number in the form
+                                above</p>
+                        </div>
+                    </div>
+                    <div class="step-card bg-orange-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-sm">2</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-amber-900 mb-1">Make Payment</h4>
+                            <p class="text-secondary text-sm">Click the "Pay $100" button to complete your secure
+                                transaction</p>
+                        </div>
+                    </div>
+                    <div class="step-card bg-orange-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-sm">3</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-amber-900 mb-1">Receive Email</h4>
+                            <p class="text-secondary text-sm">A confirmation message with your ticket ID and generation
+                                link will be sent to your email</p>
+                        </div>
+                    </div>
+                    <div class="step-card bg-orange-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-sm">4</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-amber-900 mb-1">Generate Ticket</h4>
+                            <p class="text-secondary text-sm">Click the email link and enter your ticket ID to generate
+                                your digital ticket</p>
+                        </div>
+                    </div>
+                    <div class="step-card bg-orange-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-white font-bold text-sm">5</span>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-amber-900 mb-1">Save Your Ticket</h4>
+                            <p class="text-secondary text-sm">Take a screenshot of your ticket for easy access at the
+                                event venue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <p class="text-secondary text-sm">
+                <div class="w-4 h-4 inline-flex items-center justify-center mr-1">
+                    <i class="ri-shield-check-line"></i>
+                </div>
+                Secure payment processing with 256-bit SSL encryption
+                </p>
+            </div>
+        </div>
+    </div>
+    <script id="form-validation">
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const payButton = document.querySelector('.pay-button');
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const email = emailInput.value.trim();
+                const phone = phoneInput.value.trim();
+
+                if (!email || !phone) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    alert('Please enter a valid email address.');
+                    emailInput.focus();
+                    return;
+                }
+
+                if (!isValidPhone(phone)) {
+                    alert('Please enter a valid phone number.');
+                    phoneInput.focus();
+                    return;
+                }
+
+                payButton.innerHTML = `
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-loader-4-line text-xl animate-spin"></i>
+                    </div>
+                    Processing...
+                `;
+                payButton.disabled = true;
+
+                setTimeout(() => {
+                    alert('Payment successful! Please check your email for ticket details.');
+                    payButton.innerHTML = `
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-secure-payment-line text-xl"></i>
+                        </div>
+                        Pay $100
+                    `;
+                    payButton.disabled = false;
+                    form.reset();
+                }, 2000);
+            });
+
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            function isValidPhone(phone) {
+                const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+                return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+            }
+        });
+    </script>
+    <script id="input-enhancements">
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('.form-input');
+
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('focused');
+                });
+
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'MBki4FJUnXd5UggVDGLlBg';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

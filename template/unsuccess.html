@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Payment Unsuccessful - Trendy Ticket Service</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#ef4444'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+        @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Header Section -->
+    <header class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-center">
+                <h1 class="text-2xl font-['Pacifico'] text-primary">Trendy Ticket Service</h1>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 text-center">
+            <!-- Error Icon -->
+            <div class="mb-6">
+                <div class="w-20 h-20 mx-auto bg-red-100 rounded-full flex items-center justify-center">
+                    <div class="w-12 h-12 flex items-center justify-center">
+                        <i class="ri-close-circle-line text-4xl text-red-500"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Error Message -->
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Payment Unsuccessful</h2>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                Your payment of <span class="font-semibold text-gray-900">$100</span> was unsuccessful. An email with
+                your payment ID has been sent to your email along with the details.
+            </p>
+            <!-- Action Buttons -->
+            <div class="space-y-4 mb-8">
+                <button
+                    class="w-full bg-primary text-white py-3 px-6 !rounded-button font-medium hover:bg-blue-600 transition-colors whitespace-nowrap">
+                    Try Again
+                </button>
+                <button
+                    class="w-full bg-gray-100 text-gray-700 py-3 px-6 !rounded-button font-medium hover:bg-gray-200 transition-colors whitespace-nowrap">
+                    Contact Support
+                </button>
+            </div>
+        </div>
+    </main>
+    <!-- Additional Information Panel -->
+    <section class="bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Troubleshooting Tips -->
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-question-line text-xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Common Issues</h3>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li>• Check your card details</li>
+                        <li>• Ensure sufficient funds</li>
+                        <li>• Verify billing address</li>
+                        <li>• Try a different payment method</li>
+                    </ul>
+                </div>
+                <!-- Alternative Payment Methods -->
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-bank-card-line text-xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Payment Options</h3>
+                    <div class="flex justify-center space-x-4 mb-3">
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="ri-visa-fill text-2xl text-blue-600"></i>
+                        </div>
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="ri-mastercard-fill text-2xl text-red-500"></i>
+                        </div>
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="ri-paypal-fill text-2xl text-blue-500"></i>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">We accept all major credit cards and PayPal</p>
+                </div>
+                <!-- Contact Information -->
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="ri-customer-service-2-line text-xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Need Help?</h3>
+                    <div class="text-sm text-gray-600 space-y-2">
+                        <p class="flex items-center justify-center">
+                            <i class="ri-phone-line mr-2"></i>
+                            +1 (555) 123-4567
+                        </p>
+                        <p class="flex items-center justify-center">
+                            <i class="ri-mail-line mr-2"></i>
+                            support@trendyticket.com
+                        </p>
+                        <p class="text-xs text-gray-500 mt-3">Available 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h3 class="text-lg font-['Pacifico'] text-primary">Trendy Ticket Service</h3>
+                </div>
+                <div class="flex flex-wrap justify-center md:justify-end space-x-6 text-sm">
+                    <a class="text-gray-300 hover:text-white transition-colors" href="#">Terms of Service</a>
+                    <a class="text-gray-300 hover:text-white transition-colors" href="#">Privacy Policy</a>
+                    <a class="text-gray-300 hover:text-white transition-colors" href="#">FAQ</a>
+                    <a class="text-gray-300 hover:text-white transition-colors" href="#">Contact Us</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-6 pt-6 text-center text-sm text-gray-400">
+                <p>© 2025 Trendy Ticket Service. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script id="button-interactions">
+        document.addEventListener('DOMContentLoaded', function () {
+            const tryAgainBtn = document.querySelector('button:nth-of-type(1)');
+            const contactSupportBtn = document.querySelector('button:nth-of-type(2)');
+            const returnHomeBtn = document.querySelector('button:nth-of-type(3)');
+
+            tryAgainBtn.addEventListener('click', function () {
+                window.history.back();
+            });
+
+            contactSupportBtn.addEventListener('click', function () {
+                window.location.href = 'mailto:support@trendyticket.com';
+            });
+
+            returnHomeBtn.addEventListener('click', function () {
+                window.location.href = '/';
+            });
+        });
+    </script>
+    <script id="responsive-adjustments">
+        document.addEventListener('DOMContentLoaded', function () {
+            function adjustLayout() {
+                const isMobile = window.innerWidth < 768;
+                const mainContent = document.querySelector('main > div');
+
+                if (isMobile) {
+                    mainContent.classList.add('mx-4');
+                } else {
+                    mainContent.classList.remove('mx-4');
+                }
+            }
+
+            adjustLayout();
+            window.addEventListener('resize', adjustLayout);
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'MBki4FJUnXd5UggVDGLlBg';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>
