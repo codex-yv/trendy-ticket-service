@@ -71,7 +71,7 @@ async def dashboard(request: Request, info: str = None):
     amount = await get_amount(mesh=info)
     if amount:
         data = request.cookies.get("session_amount")
-        print(data)
+        # print(data)
         return templates.TemplateResponse(
             "payments.html",
             {"request": request, "amount": str(amount),  "key_id":RAZORPAY_KEY_ID}
@@ -121,18 +121,18 @@ async def tts_payment(request: Request, response: Response, data: Amount):
 
 @app.post("/send-otp")
 async def send_otp(request:Request, email:Email = Body(...)):
-    print(f"Email: {email.email}")
+    # print(f"Email: {email.email}")
     request.session["otp"] = "12345"
-    print(f"Stored OTP in session: {request.session.get('otp')}")
-    print(f"Session ID: {request.session}")
+    # print(f"Stored OTP in session: {request.session.get('otp')}")
+    # print(f"Session ID: {request.session}")
     return JSONResponse(content={"success": True, "message": f"OTP sent to {email.email}"})
 
 @app.post("/verify-otp")
 async def verify_otp(request:Request, otp:OTP = Body(...)):
     stored_otp = request.session.get("otp")
-    print(f"Retrieved OTP from session: {stored_otp}")
-    print(f"Received OTP from request: {otp.otp}")
-    print(f"Session ID: {request.session}")
+    # print(f"Retrieved OTP from session: {stored_otp}")
+    # print(f"Received OTP from request: {otp.otp}")
+    # print(f"Session ID: {request.session}")
     
     if stored_otp == otp.otp:
         return JSONResponse(content={"success": True, "message": "OTP verified successfully"})
@@ -156,7 +156,7 @@ def create_order(request:Request, payment:Payment):
     }
 
     razorpay_order = razorpay_client.order.create(data=order_data)
-    print(razorpay_order['id'])
+    # print(razorpay_order['id'])
     return {"order_id": razorpay_order['id'], "amount": amount}
 
 @app.post('/verify')
@@ -167,9 +167,9 @@ async def verify_signature(request: Request):
     order_id = form.get("razorpay_order_id")
     signature = form.get("razorpay_signature")
 
-    print()
-    print(order_id)
-    print(signature)
+    # print()
+    # print(order_id)
+    # print(signature)
     # Verify signature
     try:
         razorpay_client.utility.verify_payment_signature({
@@ -192,7 +192,8 @@ async def verify_signature(request: Request):
             "ticket_id":order_id,
             "payment_id":payment_id,
             "signature":signature,
-            "payment_time":time
+            "payment_time":time,
+            "attending_time":""
         }
         is_inserted = await insert_ticket(Data=inserting_data)
         await share_ticket(ticket=order_id, email=email)
@@ -208,7 +209,7 @@ async def verify_signature(request: Request):
 
 @app.post("/verify-ticket")
 async def verify_ticket(request:Request, ticket:Ticket):
-    print(f"Verifying ticket: {ticket.ticket_id}")
+    # print(f"Verifying ticket: {ticket.ticket_id}")
     
     is_valid = await verify_ticket_admin(ticket=ticket.ticket_id)  # Replace with actual validation logic
     
@@ -227,10 +228,7 @@ async def generate_ticket(request:Request, ticket_id:Ticket):
 async def generate_ticket_event(request:Request):
     return templates.TemplateResponse("generate.html", {"request":request})
 
-@app.post("/guess")
-async def get_guess(request:Request):
-    data = request.cookies.get("session_amount")
-    print(data)
+
 
 
 

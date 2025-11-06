@@ -1,5 +1,5 @@
 from config.ticketsDB import client
-
+from utils.IST import ISTdate, ISTTime
 
 async def verify_ticket_admin(ticket:str):
     db = client["Tickets"]
@@ -8,9 +8,10 @@ async def verify_ticket_admin(ticket:str):
         collection = db[ticket]
         ticket_data = await collection.find({}, {"_id": 0}).to_list(None)
         if not ticket_data[0]["attended"] :
+            time = f"{ISTdate()} {ISTTime()}"
             await collection.update_one(
                 {"ticket_id":ticket},
-                {"$set":{"attended":True}}
+                {"$set":{"attended":True, "attending_time":time}}
             )
             return True
         else:
