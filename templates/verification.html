@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -12,6 +11,8 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="../static/style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <!-- jsQR fallback (used only if BarcodeDetector is unavailable) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -90,6 +91,7 @@
         #camera-preview {
             border-radius: 16px;
             overflow: hidden;
+            position: relative;
         }
 
         .verification-success {
@@ -106,6 +108,7 @@
             background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
             border: 2px solid #3B82F6;
         }
+
         @font-face {
             font-family: 'Pacifico';
             font-style: normal;
@@ -114,6 +117,114 @@
             src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
         }
 
+        /* QR Scanner Styles */
+        .qr-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: grid;
+            place-items: center;
+        }
+
+        .qr-box {
+            width: min(75vmin, 300px);
+            height: min(75vmin, 300px);
+            border-radius: 14px;
+            outline: 9999px solid rgba(0, 0, 0, 0.35);
+            border: 2px dashed rgba(255, 255, 255, 0.35);
+            box-shadow: 0 0 0 120vmax rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border: 1px solid #1e2b50;
+            background: #0d1732;
+            color: #cfe0ff;
+            border-radius: 999px;
+            font-size: 12px;
+        }
+
+        .qr-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .qr-dot.ok {
+            background: #35d07f;
+        }
+
+        .qr-dot.warn {
+            background: #ffb74d;
+        }
+
+        .qr-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .qr-button {
+            appearance: none;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 700;
+            background: #14265a;
+            color: #eaf0ff;
+            cursor: pointer;
+        }
+
+        .qr-button:hover {
+            background: #1b3272;
+        }
+
+        .qr-button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .qr-result {
+            padding: 10px;
+            border: 1px dashed #1e2b50;
+            background: #0e1835;
+            border-radius: 12px;
+            color: #eaf0ff;
+            margin-top: 16px;
+        }
+
+        .qr-mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            word-break: break-word;
+        }
+
+        .qr-scanner-info {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 256px;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -156,20 +267,35 @@
                                 <i class="ri-close-line text-gray-600"></i>
                             </button>
                         </div>
-                        <div class="w-full h-64 bg-gray-900 flex items-center justify-center" id="camera-preview">
-                            <div class="text-white text-center">
+                        <div class="qr-scanner-info">
+                            <span id="osBadge" class="qr-badge"><span class="qr-dot warn"></span>Detecting OS…</span>
+                            <span id="camBadge" class="qr-badge"><span class="qr-dot warn"></span>Preparing camera…</span>
+                            <span id="supportBadge" class="qr-badge"><span class="qr-dot warn"></span>Checking support…</span>
+                        </div>
+                        <div class="video-container" id="camera-preview">
+                            <video id="video" playsinline class="w-full h-full object-cover hidden"></video>
+                            <div class="qr-overlay">
+                                <div class="qr-box" aria-hidden="true"></div>
+                            </div>
+                            <div class="absolute inset-0 text-white text-center flex flex-col items-center justify-center" id="camera-placeholder">
                                 <div class="w-12 h-12 mx-auto mb-3 flex items-center justify-center">
                                     <i class="ri-camera-line text-2xl pulse-animation"></i>
                                 </div>
                                 <p class="text-sm">Position QR code within the frame</p>
                             </div>
                         </div>
-                        <div class="mt-4 text-center">
-                            <button
-                                class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 !rounded-button whitespace-nowrap text-sm"
-                                id="simulateScanButton">
-                                Simulate Scan (Demo)
-                            </button>
+                        <div class="qr-controls">
+                            <button class="qr-button" id="startBtn">Start Camera</button>
+                            <button class="qr-button" id="flipBtn" disabled>Flip Camera</button>
+                            <button class="qr-button" id="stopBtn" disabled>Stop Camera</button>
+                        </div>
+                        <div id="qrResult" class="qr-result hidden">
+                            <strong>QR Data:</strong>
+                            <div id="qrText" class="qr-mono mt-2 mb-4"></div>
+                            <div class="flex gap-2 justify-center">
+                                <button class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 !rounded-button" id="verifyTicketBtn">Verify Ticket</button>
+                                <button class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 !rounded-button" id="cancelScanBtn">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -238,32 +364,299 @@
             </div>
         </main>
     </div>
-    <script id="camera-scanner">
-        document.addEventListener('DOMContentLoaded', function () {
-            const scanButton = document.getElementById('scanButton');
-            const cameraContainer = document.getElementById('cameraContainer');
-            const closeCameraButton = document.getElementById('closeCameraButton');
-            const simulateScanButton = document.getElementById('simulateScanButton');
 
-            scanButton.addEventListener('click', function () {
-                cameraContainer.classList.remove('hidden');
-                scanButton.style.display = 'none';
-            });
+    <canvas id="canvas" style="display:none"></canvas>
 
-            closeCameraButton.addEventListener('click', function () {
-                cameraContainer.classList.add('hidden');
-                scanButton.style.display = 'flex';
-            });
+    <script>
+        // ------- OS / Environment helpers -------
+        const isAndroid = () => {
+            const ua = navigator.userAgent || "";
+            const uaData = navigator.userAgentData;
+            return (uaData && uaData.mobile) || /Android/i.test(ua);
+        };
+        const isDesktop = () => !isAndroid();
 
-            simulateScanButton.addEventListener('click', function () {
-                const isValid = Math.random() > 0.3;
-                showVerificationResult(isValid);
-                cameraContainer.classList.add('hidden');
-                scanButton.style.display = 'flex';
+        // ------- UI refs -------
+        const osBadge = document.getElementById('osBadge');
+        const camBadge = document.getElementById('camBadge');
+        const supportBadge = document.getElementById('supportBadge');
+
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+        const startBtn = document.getElementById('startBtn');
+        const flipBtn = document.getElementById('flipBtn');
+        const stopBtn = document.getElementById('stopBtn');
+
+        const qrResult = document.getElementById('qrResult');
+        const qrText = document.getElementById('qrText');
+        const verifyTicketBtn = document.getElementById('verifyTicketBtn');
+        const cancelScanBtn = document.getElementById('cancelScanBtn');
+
+        const scanButton = document.getElementById('scanButton');
+        const cameraContainer = document.getElementById('cameraContainer');
+        const closeCameraButton = document.getElementById('closeCameraButton');
+        const cameraPlaceholder = document.getElementById('camera-placeholder');
+
+        // ------- State -------
+        let currentStream = null;
+        let lastFacing = null; // 'user' | 'environment'
+        let rafId = null;
+        let detector = null;
+        let usingBarcodeDetector = false;
+        let scanningActive = false;
+        let scannedData = null;
+
+        // ------- Badges -------
+        function setBadge(badge, ok, text) {
+            const dot = badge.querySelector('.qr-dot') || document.createElement('span');
+            dot.className = 'qr-dot ' + (ok ? 'ok' : 'warn');
+            if (!badge.querySelector('.qr-dot')) badge.prepend(dot);
+            badge.childNodes[badge.childNodes.length - 1].textContent = text;
+        }
+
+        // ------- Init env badges -------
+        const os = isAndroid() ? 'Android' : 'PC';
+        setBadge(osBadge, true, os);
+
+        // ------- Feature detection -------
+        (async () => {
+            if ('BarcodeDetector' in window) {
+                try {
+                    detector = new BarcodeDetector({ formats: ['qr_code'] });
+                    usingBarcodeDetector = true;
+                    setBadge(supportBadge, true, 'BarcodeDetector ready');
+                } catch {
+                    usingBarcodeDetector = false;
+                    setBadge(supportBadge, false, 'Using jsQR fallback');
+                }
+            } else {
+                usingBarcodeDetector = false;
+                setBadge(supportBadge, false, 'Using jsQR fallback');
+            }
+        })();
+
+        // ------- Camera enumeration -------
+        async function listVideoDevices() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            return devices.filter(d => d.kind === 'videoinput');
+        }
+
+        async function pickDeviceByFacing(facing) {
+            const videos = await listVideoDevices();
+            // Try label hints first
+            const match = videos.find(d => {
+                const label = (d.label || '').toLowerCase();
+                if (facing === 'environment')
+                    return /back|rear|environment|wide/.test(label);
+                return /front|user|face/.test(label);
             });
+            if (match) return match.deviceId;
+            // Heuristic fallback: first for front, last for back on mobile
+            return facing === 'environment' ? (videos[videos.length - 1]?.deviceId || null)
+                                            : (videos[0]?.deviceId || null);
+        }
+
+        // ------- Camera control -------
+        async function startCamera(facing = null, deviceId = null) {
+            stopCamera();
+            scanningActive = false;
+            qrResult.classList.add('hidden');
+
+            const desiredFacing = facing || (isAndroid() ? 'environment' : 'user');
+            lastFacing = desiredFacing;
+
+            setBadge(camBadge, true, desiredFacing === 'environment' ? 'Back camera' : 'Front camera');
+
+            const videoConstraints = {};
+            if (deviceId) {
+                videoConstraints.deviceId = { exact: deviceId };
+            } else {
+                videoConstraints.facingMode = { ideal: desiredFacing };
+            }
+            // Aim for decent resolution for QR detection
+            videoConstraints.width = { ideal: 1280 };
+            videoConstraints.height = { ideal: 720 };
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false });
+                currentStream = stream;
+                video.srcObject = stream;
+                await video.play();
+                
+                // Hide placeholder and show video
+                cameraPlaceholder.classList.add('hidden');
+                video.classList.remove('hidden');
+
+                // Enable controls
+                flipBtn.disabled = false;
+                stopBtn.disabled = false;
+
+                // Start scanning
+                scanningActive = true;
+                scanLoop();
+            } catch (e) {
+                console.error('getUserMedia error', e);
+                alert('Could not access camera. Check HTTPS/localhost, permissions, and Brave Shields.');
+            }
+        }
+
+        function stopCamera() {
+            scanningActive = false;
+            if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
+            if (video) {
+                video.pause();
+                video.srcObject = null;
+                video.classList.add('hidden');
+            }
+            if (currentStream) {
+                currentStream.getTracks().forEach(t => t.stop());
+                currentStream = null;
+            }
+            stopBtn.disabled = true;
+            flipBtn.disabled = true;
+            qrResult.classList.add('hidden');
+            cameraPlaceholder.classList.remove('hidden');
+        }
+
+        // ------- Scanning -------
+        function drawToCanvas() {
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+            if (!vw || !vh) return false;
+            canvas.width = vw;
+            canvas.height = vh;
+            ctx.drawImage(video, 0, 0, vw, vh);
+            return true;
+        }
+
+        async function scanOnce() {
+            // Primary: BarcodeDetector
+            if (usingBarcodeDetector && detector) {
+                try {
+                    const barcodes = await detector.detect(video);
+                    if (barcodes && barcodes.length) {
+                        return barcodes[0].rawValue || null;
+                    }
+                } catch (e) {
+                    // If detection throws, silently fallback to jsQR below
+                }
+            }
+
+            // Fallback: jsQR from canvas
+            if (!window.jsQR) return null; // still loading or failed
+            if (!drawToCanvas()) return null;
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = window.jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
+            if (code && code.data) return code.data;
+            return null;
+        }
+
+        async function scanLoop() {
+            if (!scanningActive) return;
+            const val = await scanOnce();
+            if (val) {
+                showQRResult(val);
+                // Light haptic on mobile
+                if ('vibrate' in navigator) navigator.vibrate(50);
+                // Stop scanning but keep camera active
+                scanningActive = false;
+                if (rafId) cancelAnimationFrame(rafId);
+                return;
+            }
+            // Throttle via rAF; actual work is async
+            rafId = requestAnimationFrame(scanLoop);
+        }
+
+        function showQRResult(text) {
+            scannedData = text;
+            qrResult.classList.remove('hidden');
+            qrText.textContent = text;
+        }
+
+        // ------- Verification API -------
+        async function verifyTicket(ticketId) {
+            try {
+                // Replace with your actual FastAPI endpoint
+                const response = await fetch('https://your-fastapi-server.com/verify-ticket', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ ticket_id: ticketId })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const result = await response.json();
+                return result.valid || false;
+            } catch (error) {
+                console.error('Error verifying ticket:', error);
+                return false;
+            }
+        }
+
+        // ------- UI Event Handlers -------
+        scanButton.addEventListener('click', function () {
+            cameraContainer.classList.remove('hidden');
+            scanButton.style.display = 'none';
+            // Auto-start camera on secure origins
+            if (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+                startCamera();
+            }
         });
-    </script>
-    <script id="verification-display">
+
+        closeCameraButton.addEventListener('click', function () {
+            cameraContainer.classList.add('hidden');
+            scanButton.style.display = 'flex';
+            stopCamera();
+        });
+
+        startBtn.addEventListener('click', () => startCamera());
+        stopBtn.addEventListener('click', () => stopCamera());
+
+        flipBtn.addEventListener('click', async () => {
+            const next = lastFacing === 'environment' ? 'user' : 'environment';
+            // Try to pick device explicitly for reliability
+            const devId = await pickDeviceByFacing(next);
+            await startCamera(next, devId);
+        });
+
+        verifyTicketBtn.addEventListener('click', async function() {
+            if (!scannedData) return;
+            
+            // Show loading state
+            verifyTicketBtn.disabled = true;
+            verifyTicketBtn.textContent = 'Verifying...';
+            
+            try {
+                const isValid = await verifyTicket(scannedData);
+                showVerificationResult(isValid, scannedData);
+                qrResult.classList.add('hidden');
+                cameraContainer.classList.add('hidden');
+                scanButton.style.display = 'flex';
+            } catch (error) {
+                console.error('Verification error:', error);
+                showVerificationResult(false, scannedData);
+                qrResult.classList.add('hidden');
+                cameraContainer.classList.add('hidden');
+                scanButton.style.display = 'flex';
+            } finally {
+                verifyTicketBtn.disabled = false;
+                verifyTicketBtn.textContent = 'Verify Ticket';
+            }
+        });
+
+        cancelScanBtn.addEventListener('click', function() {
+            qrResult.classList.add('hidden');
+            startCamera();
+        });
+
+        // ------- Original Verification Display Logic -------
         document.addEventListener('DOMContentLoaded', function () {
             const statusContainer = document.getElementById('statusContainer');
             const statusCard = document.getElementById('statusCard');
@@ -274,8 +667,8 @@
             const ticketDetails = document.getElementById('ticketDetails');
             const scanAgainButton = document.getElementById('scanAgainButton');
 
-            window.showVerificationResult = function (isValid) {
-                const ticketData = generateTicketData(isValid);
+            window.showVerificationResult = function (isValid, ticketId) {
+                const ticketData = generateTicketData(isValid, ticketId);
 
                 statusCard.className = 'rounded-lg p-6 text-center';
 
@@ -315,10 +708,14 @@
                 setTimeout(() => {
                     statusCard.classList.add('hidden');
                 }, 400);
+                // Reset camera view
+                cameraContainer.classList.remove('hidden');
+                scanButton.style.display = 'none';
+                startCamera();
             });
         });
-    </script>
-    <script id="ticket-data-generator">
+
+        // ------- Original Ticket Data Generator -------
         document.addEventListener('DOMContentLoaded', function () {
             const events = [
                 'Summer Music Festival 2024',
@@ -333,12 +730,12 @@
                 'David Kim', 'Lisa Anderson', 'James Wilson', 'Maria Garcia'
             ];
 
-            window.generateTicketData = function (isValid) {
+            window.generateTicketData = function (isValid, ticketId) {
                 const now = new Date();
                 const eventDate = new Date(now.getTime() + Math.random() * 30 * 24 * 60 * 60 * 1000);
 
                 return {
-                    id: isValid ? `TK-2024-${String(Math.floor(Math.random() * 9999)).padStart(3, '0')}` : 'INVALID',
+                    id: isValid ? (ticketId || `TK-2024-${String(Math.floor(Math.random() * 9999)).padStart(3, '0')}`) : 'INVALID',
                     event: events[Math.floor(Math.random() * events.length)],
                     date: eventDate.toLocaleDateString('en-US', {
                         weekday: 'short',
