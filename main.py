@@ -122,12 +122,12 @@ async def tts_payment(request: Request, response: Response, data: Amount):
         # Return JSON response with redirect URL for fetch requests
         redirect_url = f"/{safe_url}"
         json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
-        json_response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60, secure=True, samesite="none")
+        json_response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60)
         return json_response
     else:
         # Return redirect response for direct form submissions
         response =  RedirectResponse(url=f"/{safe_url}", status_code=303)
-        response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60, secure=True, samesite="none")
+        response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60)
         return response
 
 @app.post("/send-otp")
