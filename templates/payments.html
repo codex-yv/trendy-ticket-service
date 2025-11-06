@@ -10,6 +10,7 @@
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
     <script>
         tailwind.config = {
@@ -81,49 +82,54 @@
         .custom-shadow {
             box-shadow: 0 10px 40px rgba(139, 107, 71, 0.1);
         }
+
         @font-face {
             font-family: 'Inter';
             font-style: normal;
             font-weight: 300;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf) format('truetype');
-            }
-            @font-face {
+        }
+
+        @font-face {
             font-family: 'Inter';
             font-style: normal;
             font-weight: 400;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
-            }
-            @font-face {
+        }
+
+        @font-face {
             font-family: 'Inter';
             font-style: normal;
             font-weight: 500;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
-            }
-            @font-face {
+        }
+
+        @font-face {
             font-family: 'Inter';
             font-style: normal;
             font-weight: 600;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
-            }
-            @font-face {
+        }
+
+        @font-face {
             font-family: 'Inter';
             font-style: normal;
             font-weight: 700;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
-            }
-            @font-face {
+        }
+
+        @font-face {
             font-family: 'Pacifico';
             font-style: normal;
             font-weight: 400;
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
         }
-
     </style>
 </head>
 
@@ -175,7 +181,7 @@
                         <div class="w-6 h-6 flex items-center justify-center">
                             <i class="ri-secure-payment-line text-xl"></i>
                         </div>
-                        Pay $100
+                        Pay {{amount}}
                     </button>
                 </form>
             </div>
