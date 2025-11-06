@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -10,8 +9,9 @@
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="../static/style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <!-- QRCode Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
@@ -23,7 +23,6 @@
             font-display: swap;
             src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
         }
-
     </style>
     <script>
         tailwind.config = {
@@ -71,33 +70,32 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-gray-50 rounded-lg p-2">
                         <div class="text-xs text-gray-500 mb-1">NAME</div>
-                        <div class="font-semibold text-gray-900 text-sm">Youraj</div>
+                        <div class="font-semibold text-gray-900 text-sm">{{ name }}</div>
                     </div>
                     <div class="bg-gray-50 rounded-lg p-2">
                         <div class="text-xs text-gray-500 mb-1">STATUS</div>
                         <div class="flex items-center">
+                            {% if valid %}
                             <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                             <span class="text-green-600 font-semibold text-xs">Valid</span>
+                            {% else %}
+                            <div class="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                            <span class="text-red-600 font-semibold text-xs">Invalid</span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 <div class="bg-gray-50 rounded-lg p-2">
                     <div class="text-xs text-gray-500 mb-1">EMAIL</div>
-                    <div class="font-medium text-gray-900 text-xs">abc@gmail.com</div>
+                    <div class="font-medium text-gray-900 text-xs">{{ email }}</div>
                 </div>
                 <div class="bg-gray-50 rounded-lg p-2">
                     <div class="text-xs text-gray-500 mb-1">CONTACT</div>
-                    <div class="font-medium text-gray-900 text-sm">+1 (555) 123-4567</div>
+                    <div class="font-medium text-gray-900 text-sm">{{ phone }}</div>
                 </div>
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-3 text-center">
-                    <div
-                        class="w-24 h-24 mx-auto mb-2 bg-white rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-                        <div class="text-center">
-                            <div class="w-5 h-5 flex items-center justify-center mx-auto mb-1">
-                                <i class="ri-qr-code-line text-lg text-gray-400"></i>
-                            </div>
-                            <div class="text-xs text-gray-400">QR CODE</div>
-                        </div>
+                    <div id="qrCodeContainer" class="w-24 h-24 mx-auto mb-2 bg-white rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                        <!-- QR code will be generated here -->
                     </div>
                     <div class="text-xs font-medium text-gray-700">Scan this QR for ticket ID</div>
                 </div>
@@ -114,7 +112,7 @@
                 </div>
                 <div class="flex justify-between items-center pt-2">
                     <div class="text-xs text-gray-400">
-                        TICKET #TTS-2024-001
+                        TICKET #{{ ticket_id }}
                     </div>
                     <div class="flex space-x-1">
                         <div class="w-1.5 h-1.5 bg-primary rounded-full"></div>
@@ -148,18 +146,40 @@
                     this.classList.remove('scale-105');
                 }, 200);
             });
-            const statusElement = document.querySelector('.text-green-600');
-            const statusDot = document.querySelector('.bg-green-500');
-            let isValid = true;
-            statusElement.parentElement.addEventListener('click', function () {
+            
+            // Generate QR code with ticket_id
+            const ticketId = "{{ ticket_id }}";
+            const qrContainer = document.getElementById('qrCodeContainer');
+            
+            if (ticketId && qrContainer) {
+                // Clear the container
+                qrContainer.innerHTML = '';
+                
+                // Generate QR code
+                new QRCode(qrContainer, {
+                    text: ticketId,
+                    width: 80,
+                    height: 80,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            }
+            
+            // Toggle ticket status (for demo purposes)
+            const statusElement = document.querySelector('.flex.items-center');
+            const statusDot = document.querySelector('.w-2.h-2');
+            let isValid = {{ 'true' if valid else 'false' }};
+            
+            statusElement.addEventListener('click', function () {
                 isValid = !isValid;
                 if (isValid) {
-                    statusElement.textContent = 'Valid';
-                    statusElement.className = 'text-green-600 font-semibold text-sm';
+                    statusElement.querySelector('span').textContent = 'Valid';
+                    statusElement.querySelector('span').className = 'text-green-600 font-semibold text-xs';
                     statusDot.className = 'w-2 h-2 bg-green-500 rounded-full mr-2';
                 } else {
-                    statusElement.textContent = 'Invalid';
-                    statusElement.className = 'text-red-600 font-semibold text-sm';
+                    statusElement.querySelector('span').textContent = 'Invalid';
+                    statusElement.querySelector('span').className = 'text-red-600 font-semibold text-xs';
                     statusDot.className = 'w-2 h-2 bg-red-500 rounded-full mr-2';
                 }
             });

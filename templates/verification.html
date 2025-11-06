@@ -9,7 +9,6 @@
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="../static/style.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
     <!-- jsQR fallback (used only if BarcodeDetector is unavailable) -->
     <script defer src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
@@ -580,7 +579,7 @@
         async function verifyTicket(ticketId) {
             try {
                 // Replace with your actual FastAPI endpoint
-                const response = await fetch('https://your-fastapi-server.com/verify-ticket', {
+                const response = await fetch('/verify-ticket', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

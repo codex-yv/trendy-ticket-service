@@ -11,17 +11,23 @@ import uuid
 from urllib.parse import quote
 import razorpay
 
+from schemas.ticketSchema import Ticket
 from schemas.paymentSchemas import Payment
 from schemas.emailSchemas import Email, OTP
 from schemas.amountSchemas import Amount
 
 from security.encrypyAmt import encryptt
-from utils.general import get_amount
+from config.payment_config import key_id, key_seceret
+from utils.tickPost import insert_ticket
+from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
+
+from utils.general import get_amount, share_ticket
+from utils.IST import ISTdate, ISTTime
 
 templates = Jinja2Templates(directory="templates")
 
-RAZORPAY_KEY_ID = "rzp_test_jMpRm1HDX5ZT4x"
-RAZORPAY_KEY_SECRET = "PERAVYmOCKh4ZygDuRzEJWzi"
+RAZORPAY_KEY_ID = key_id
+RAZORPAY_KEY_SECRET = key_seceret
 
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
@@ -80,10 +86,27 @@ def payment_success(request:Request):
     return templates.TemplateResponse("success.html", {"request":request, "email":email, "amount":amount})
 
 @app.get('/unsuccess/payment')
-def payment_success(request:Request):
+async def payment_success(request:Request):
     amount = request.cookies.get("session_amount")
     email = request.session.get("email")
     return templates.TemplateResponse("unsuccess.html", {"request":request, "email":email, "amount":amount})
+
+@app.get('/generate/ticket')
+async def payment_success(request:Request):
+    ticket_id = request.session.get("ticket")
+    ticket_details = await get_ticket_info(ticket=ticket_id)
+    email = ticket_details["email"]
+    name = ticket_details["name"]
+    phone = ticket_details["phone"]
+    valid = ticket_details["valid"]
+    return templates.TemplateResponse("tickets.html", {"request":request, "ticket_id":ticket_id, "valid":valid, "name":name, "email":email, "phone":phone})
+
+@app.get("/admin/verify")
+async def ticket_verification_page(request:Request):
+    return templates.TemplateResponse("verification.html", {"request":request})
+
+# return templates.TemplateResponse("verification.html", {"request":request, "ticket_id":ticket_id, "valid":true, "name":name, "email":email, "phone":phone})
+
 
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: Amount):
@@ -122,9 +145,6 @@ def create_order(request:Request, payment:Payment):
     # Create an order with Razorpay
     amount = request.cookies.get("session_amount")  # Amount in paise (e.g., ₹500)
     currency = "INR"
-    # print(payment.name)
-    # print(payment.email)
-    # print(payment.phone)
 
     request.session["name"] = payment.name
     request.session["email"] = payment.email
@@ -134,9 +154,7 @@ def create_order(request:Request, payment:Payment):
         "amount": int(float(amount)*100),
         "currency": currency
     }
-    print()
-    print(order_data)
-    print()
+
     razorpay_order = razorpay_client.order.create(data=order_data)
     print(razorpay_order['id'])
     return {"order_id": razorpay_order['id'], "amount": amount}
@@ -149,7 +167,7 @@ async def verify_signature(request: Request):
     order_id = form.get("razorpay_order_id")
     signature = form.get("razorpay_signature")
 
-    print(payment_id)
+    print()
     print(order_id)
     print(signature)
     # Verify signature
@@ -159,13 +177,55 @@ async def verify_signature(request: Request):
             "razorpay_payment_id": payment_id,
             "razorpay_signature": signature
         })
-        return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
+        name = request.session.get("name")
+        email = request.session.get("email")
+        phone = request.session.get("phone")
+        amount = request.cookies.get("session_amount")
+        time = f"{ISTdate()} {ISTTime()}"
+
+        inserting_data = {
+            "name":name,
+            "email":email,
+            "phone":phone,
+            "amount":amount,
+            "attended":False,
+            "ticket_id":order_id,
+            "payment_id":payment_id,
+            "signature":signature,
+            "payment_time":time
+        }
+        is_inserted = await insert_ticket(Data=inserting_data)
+        await share_ticket(ticket=order_id, email=email)
+        
+        if is_inserted:
+            return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
+        else:
+            # generate your own ticket_id
+            print("EROR")
+            
     except razorpay.errors.SignatureVerificationError:
         return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
 
-@app.get("/admin/verify")
-async def ticket_verification_page(request:Request):
-    return templates.TemplateResponse("verification.html", {"request":request})
+@app.post("/verify-ticket")
+async def verify_ticket(request:Request, ticket:Ticket):
+    print(f"Verifying ticket: {ticket.ticket_id}")
+    
+    is_valid = await verify_ticket_admin(ticket=ticket.ticket_id)  # Replace with actual validation logic
+    
+    return JSONResponse(content={"valid": is_valid})
+
+@app.post("/verify-ticket-id")
+async def generate_ticket(request:Request, ticket_id:Ticket):
+    is_ticket = await just_check_ticket(ticket=ticket_id.ticket_id)
+    request.session["ticket"] = ticket_id.ticket_id
+    if not is_ticket:
+        return JSONResponse(content={"success": is_ticket, "message": "Invalid Ticket ID"})
+    else:
+        return RedirectResponse(url = '/generate/ticket',  status_code=HTTP_303_SEE_OTHER)
+
+@app.get("/generate/ticket/event")
+async def generate_ticket_event(request:Request):
+    return templates.TemplateResponse("generate.html", {"request":request})
 
 @app.post("/guess")
 async def get_guess(request:Request):
