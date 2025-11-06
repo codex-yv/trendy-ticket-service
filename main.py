@@ -70,7 +70,7 @@ async def welcome_head():
 async def dashboard(request: Request, info: str = None):
     amount = await get_amount(mesh=info)
     if amount:
-        data = request.cookies.get("session_amount")
+        request.session["session_amount"] = amount
         # print(data)
         return templates.TemplateResponse(
             "payments.html",
@@ -81,13 +81,13 @@ async def dashboard(request: Request, info: str = None):
     
 @app.get('/success/payment')
 def payment_success(request:Request):
-    amount = request.cookies.get("session_amount")
+    amount = request.session.get("session_amount")
     email = request.session.get("email")
     return templates.TemplateResponse("success.html", {"request":request, "email":email, "amount":amount})
 
 @app.get('/unsuccess/payment')
 async def payment_success(request:Request):
-    amount = request.cookies.get("session_amount")
+    amount = request.session.get("session_amount")
     email = request.session.get("email")
     return templates.TemplateResponse("unsuccess.html", {"request":request, "email":email, "amount":amount})
 
@@ -122,12 +122,10 @@ async def tts_payment(request: Request, response: Response, data: Amount):
         # Return JSON response with redirect URL for fetch requests
         redirect_url = f"/{safe_url}"
         json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
-        json_response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60)
         return json_response
     else:
         # Return redirect response for direct form submissions
         response =  RedirectResponse(url=f"/{safe_url}", status_code=303)
-        response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60)
         return response
 
 @app.post("/send-otp")
@@ -154,7 +152,7 @@ async def verify_otp(request:Request, otp:OTP = Body(...)):
 @app.post('/order')
 def create_order(request:Request, payment:Payment):
     # Create an order with Razorpay
-    amount = request.cookies.get("session_amount")  # Amount in paise (e.g., ₹500)
+    amount = request.session.get("session_amount")  # Amount in paise (e.g., ₹500)
     currency = "INR"
 
     request.session["name"] = payment.name
@@ -191,7 +189,7 @@ async def verify_signature(request: Request):
         name = request.session.get("name")
         email = request.session.get("email")
         phone = request.session.get("phone")
-        amount = request.cookies.get("session_amount")
+        amount = request.session.get("session_amount")
         time = f"{ISTdate()} {ISTTime()}"
 
         inserting_data = {
