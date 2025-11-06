@@ -115,9 +115,20 @@ async def tts_payment(request: Request, response: Response, data: Amount):
     
     url = idd + "#" + token.decode() + "#" + key.decode()
     safe_url = quote(url, safe="")
-    response =  RedirectResponse(url=f"/{safe_url}", status_code=303)
-    response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60)
-    return response
+    
+    # Check if request is from fetch (has Accept: application/json header)
+    accept_header = request.headers.get("accept", "")
+    if "application/json" in accept_header:
+        # Return JSON response with redirect URL for fetch requests
+        redirect_url = f"/{safe_url}"
+        json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
+        json_response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60, secure=True, samesite="none")
+        return json_response
+    else:
+        # Return redirect response for direct form submissions
+        response =  RedirectResponse(url=f"/{safe_url}", status_code=303)
+        response.set_cookie(key="session_amount", value=str(data.amount), httponly=True, max_age=60*60, secure=True, samesite="none")
+        return response
 
 @app.post("/send-otp")
 async def send_otp(request:Request, email:Email = Body(...)):
@@ -227,3 +238,8 @@ async def generate_ticket(request:Request, ticket_id:Ticket):
 @app.get("/generate/ticket/event")
 async def generate_ticket_event(request:Request):
     return templates.TemplateResponse("generate.html", {"request":request})
+
+
+
+
+
