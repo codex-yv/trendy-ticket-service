@@ -1,0 +1,21 @@
+https://trendyticketservices.onrender.com/generate/ticket/event -> get -> to generate ticket
+https://trendyticketservices.onrender.com/admin/verify -> get -> to verify generated ticket
+https://trendyticketservices.onrender.com/payment -> post -> api -> accepts 'amount'
+
+<script>
+    async function sendPayment() {
+      const amount = document.getElementById("amount").value;
+
+      const response = await fetch("http://127.0.0.1:8000/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+        credentials: "include"   // ✅ IMPORTANT
+      });
+
+      // If FastAPI redirects, follow the redirect and open the page
+      if (response.redirected) {
+        window.location.href = response.url;
+      }
+    }
+</script>

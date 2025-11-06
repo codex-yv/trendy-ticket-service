@@ -44,7 +44,7 @@ async def share_ticket(ticket: str, email:str):
                     You can generate and view your ticket using the link below:
                 </p>
                 <div style="text-align:center; margin:20px 0;">
-                    <a href="#" style="display:inline-block; background-color:#4CAF50; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-size:16px;">
+                    <a href="https://trendyticketservices.onrender.com/generate/ticket/event" style="display:inline-block; background-color:#4CAF50; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-size:16px;">
                         🎫 Generate Your Ticket
                     </a>
                 </div>

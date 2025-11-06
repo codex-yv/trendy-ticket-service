@@ -33,7 +33,7 @@ razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
-app.add_middleware(SessionMiddleware, secret_key="qwertyuiopasdfghjkl@#$%RTYU", same_site="lax", https_only=False, max_age=3600)
+app.add_middleware(SessionMiddleware, secret_key="qwertyuiopasdfghjkl@#$%RTYU", same_site="none", https_only=True, max_age=3600)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -227,8 +227,3 @@ async def generate_ticket(request:Request, ticket_id:Ticket):
 @app.get("/generate/ticket/event")
 async def generate_ticket_event(request:Request):
     return templates.TemplateResponse("generate.html", {"request":request})
-
-
-
-
-
