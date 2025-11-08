@@ -1,14 +1,12 @@
 from config.ticketsDB import client
+from utils.adminPuts import updateTicketGeneratedCount
 
-
-async def insert_ticket(Data:dict): # /see project schemas in adminProjectSchemas.py
+async def insert_ticket(Data:dict, collection_name:str): # /see project schemas in adminProjectSchemas.py
     db = client['Tickets']
-    tickets = await db.list_collection_names()
+    collection = db[collection_name]
+    
+    await collection.insert_one(Data)
+    await updateTicketGeneratedCount(collection_name)
+    return True
 
-    if Data["ticket_id"] not in tickets:
-        collection = db[Data["ticket_id"]]
-        await collection.insert_one(Data)
-        return True
-    else:
-        return False
     

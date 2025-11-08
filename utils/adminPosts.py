@@ -2,7 +2,7 @@ from config.ticketsDB import client
 import uuid
 from utils.IST import ISTdate, ISTTime
 from utils.adminPuts import updateEventsStatus
-
+from utils.adminPuts import updateRedirect
 
 async def createNewAdmin(admin_data:object):
     db = client["Clients"]
@@ -47,4 +47,5 @@ async def hostEvent(hosting:object, email:str):
     })
     event_infos = [str(result.inserted_id), (hosting.event_name).title(), hosting.event_token]
     await updateEventsStatus(email, event_infos)
+    await updateRedirect(hosting.event_token, email)
     return True

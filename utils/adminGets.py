@@ -1,3 +1,4 @@
+import collections
 from config.ticketsDB import client
 from bson.objectid import ObjectId
 
@@ -105,4 +106,20 @@ async def getEventAttendees(email:str, event_id:str):
     else:
         return []
 
-    
+
+async def checkRedirectTTS(key:str, token:str):
+    db = client["Redirects"]
+    collection = db["secrets"]
+
+    data = await collection.find({}, {"_id": 0}).to_list(None)
+    print(data)
+    if data:
+        if key in data[0]["keys"]:
+            for tokenn in data[0]["tokens"]:
+                if tokenn[0] == token:
+                    return True
+            return False
+        else:
+            return False
+    else:
+        return False

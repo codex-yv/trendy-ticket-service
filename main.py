@@ -13,8 +13,8 @@ import razorpay
 
 from schemas.ticketSchema import Ticket
 from schemas.paymentSchemas import Payment
-from schemas.emailSchemas import Email, OTP
-from schemas.amountSchemas import Amount
+from schemas.emailSchemas import Email, OTPe
+from schemas.RedirectSchemas import RedirectTTS
 from schemas.adminAuthSchemas import Login, Signup, OTP
 from schemas.adminDashboardSchemas import Useless, Hosting
 
@@ -24,12 +24,13 @@ from config.payment_config import key_id, key_seceret
 from utils.tickPost import insert_ticket
 from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
 
-from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees
+from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees, checkRedirectTTS
 from utils.adminPosts import createNewAdmin, hostEvent
 from utils.adminPuts import updateAdminKey, deteleEvent
 
 from utils.general import get_amount, share_ticket, generate_event_token
 from utils.IST import ISTdate, ISTTime
+from utils.redirectCURD import update_json, get_value
 
 templates = Jinja2Templates(directory="templates")
 templates_admin = Jinja2Templates(directory="templates/admin")
@@ -76,38 +77,50 @@ async def welcome_head():
 
 @app.get("/{info}")
 async def dashboard(request: Request, info: str = None):
-    amount = await get_amount(mesh=info)
-    if amount:
-        request.session["session_amount"] = amount
-        # print(data)
-        return templates.TemplateResponse(
-            "payments.html",
-            {"request": request, "amount": str(amount),  "key_id":RAZORPAY_KEY_ID}
-        )
+    is_key = await get_value(file_path="database/redirectTTS.json", key=info)
+    if is_key:
+        amount = is_key["amount"]
+        token = is_key["token"]
+        if amount and token:
+            request.session["session_amount"] = amount
+            request.session["token"] = token
+            return templates.TemplateResponse(
+                "payments.html",
+                {"request": request, "amount": str(amount),  "key_id":RAZORPAY_KEY_ID}
+            )
     else:
-        return templates.TemplateResponse("success.html", {"request":request})
+        return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
     
 @app.get('/success/payment')
 def payment_success(request:Request):
     amount = request.session.get("session_amount")
     email = request.session.get("email")
-    return templates.TemplateResponse("success.html", {"request":request, "email":email, "amount":amount})
+    if amount and email:
+        return templates.TemplateResponse("success.html", {"request":request, "email":email, "amount":amount})
+    else:
+        return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
 @app.get('/unsuccess/payment')
 async def payment_success(request:Request):
     amount = request.session.get("session_amount")
     email = request.session.get("email")
-    return templates.TemplateResponse("unsuccess.html", {"request":request, "email":email, "amount":amount})
+    if amount and email:
+        return templates.TemplateResponse("unsuccess.html", {"request":request, "email":email, "amount":amount})
+    else:
+        return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
 @app.get('/generate/ticket')
 async def payment_success(request:Request):
     ticket_id = request.session.get("ticket")
-    ticket_details = await get_ticket_info(ticket=ticket_id)
-    email = ticket_details["email"]
-    name = ticket_details["name"]
-    phone = ticket_details["phone"]
-    valid = ticket_details["valid"]
-    return templates.TemplateResponse("tickets.html", {"request":request, "ticket_id":ticket_id, "valid":valid, "name":name, "email":email, "phone":phone})
+    if ticket_id:
+        ticket_details = await get_ticket_info(ticket=ticket_id)
+        email = ticket_details["email"]
+        name = ticket_details["name"]
+        phone = ticket_details["phone"]
+        valid = ticket_details["valid"]
+        return templates.TemplateResponse("tickets.html", {"request":request, "ticket_id":ticket_id, "valid":valid, "name":name, "email":email, "phone":phone})
+    else:
+        return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/admin/verify")
 async def ticket_verification_page(request:Request):
@@ -115,24 +128,31 @@ async def ticket_verification_page(request:Request):
 
 
 @app.post("/payment")
-async def tts_payment(request: Request, response: Response, data: Amount):
-    idd = str(uuid.uuid4())
-    key, token = await encryptt(amount=str(data.amount))
-    
-    url = idd + "#" + token.decode() + "#" + key.decode()
-    safe_url = quote(url, safe="")
-    
-    # Check if request is from fetch (has Accept: application/json header)
-    accept_header = request.headers.get("accept", "")
-    if "application/json" in accept_header:
-        # Return JSON response with redirect URL for fetch requests
-        redirect_url = f"/{safe_url}"
-        json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
-        return json_response
+async def tts_payment(request: Request, response: Response, data: RedirectTTS):
+    is_redirect = await checkRedirectTTS(key=data.key, token=data.token)
+    print(is_redirect)
+    if is_redirect:
+        redirect_data = {"token": data.token, "amount": data.amount}
+
+        idd = str(uuid.uuid4())
+
+        file_path = "database/redirectTTS.json"
+        await update_json(file_path=file_path, key=idd, value=redirect_data)
+        
+        safe_url = quote(idd, safe="")
+        
+        # Check if request is from fetch (has Accept: application/json header)
+        accept_header = request.headers.get("accept", "")
+        if "application/json" in accept_header:
+            # Return JSON response with redirect URL for fetch requests
+            redirect_url = f"/{safe_url}"
+            json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
+            return json_response
+        else:
+            response =  RedirectResponse(url=f"/", status_code=303)
+            return response
     else:
-        # Return redirect response for direct form submissions
-        response =  RedirectResponse(url=f"/{safe_url}", status_code=303)
-        return response
+        return JSONResponse(content={"success": False, "message": "Invalid key or token"}, status_code=400)
 
 @app.post("/send-otp")
 async def send_otp(request:Request, email:Email = Body(...)):
@@ -140,7 +160,7 @@ async def send_otp(request:Request, email:Email = Body(...)):
     return JSONResponse(content={"success": True, "message": f"OTP sent to {email.email}"})
 
 @app.post("/verify-otp")
-async def verify_otp(request:Request, otp:OTP = Body(...)):
+async def verify_otp(request:Request, otp:OTPe = Body(...)):
     stored_otp = request.session.get("otp")
     
     if stored_otp == otp.otp:
@@ -190,6 +210,7 @@ async def verify_signature(request: Request):
         email = request.session.get("email")
         phone = request.session.get("phone")
         amount = request.session.get("session_amount")
+        token = request.session.get("token")
         time = f"{ISTdate()} {ISTTime()}"
 
         inserting_data = {
@@ -204,7 +225,7 @@ async def verify_signature(request: Request):
             "payment_time":time,
             "attending_time":""
         }
-        is_inserted = await insert_ticket(Data=inserting_data)
+        is_inserted = await insert_ticket(Data=inserting_data, collection_name=token)
         await share_ticket(ticket=order_id, email=email)
         
         if is_inserted:

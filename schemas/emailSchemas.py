@@ -3,5 +3,5 @@ from pydantic import BaseModel
 class Email(BaseModel):
     email:str
 
-class OTP(BaseModel):
+class OTPe(BaseModel):
     otp:str
