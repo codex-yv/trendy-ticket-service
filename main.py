@@ -10,21 +10,28 @@ import secrets
 import uuid
 from urllib.parse import quote
 import razorpay
+import time
 
 from schemas.ticketSchema import Ticket
 from schemas.paymentSchemas import Payment
 from schemas.emailSchemas import Email, OTP
 from schemas.amountSchemas import Amount
+from schemas.adminAuthSchemas import Login, Signup, OTP
 
 from security.encrypyAmt import encryptt
 from config.payment_config import key_id, key_seceret
+
 from utils.tickPost import insert_ticket
 from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
+
+from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData
+from utils.adminPosts import createNewAdmin
 
 from utils.general import get_amount, share_ticket
 from utils.IST import ISTdate, ISTTime
 
 templates = Jinja2Templates(directory="templates")
+templates_admin = Jinja2Templates(directory="templates/admin")
 
 RAZORPAY_KEY_ID = key_id
 RAZORPAY_KEY_SECRET = key_seceret
@@ -105,8 +112,6 @@ async def payment_success(request:Request):
 async def ticket_verification_page(request:Request):
     return templates.TemplateResponse("verification.html", {"request":request})
 
-# return templates.TemplateResponse("verification.html", {"request":request, "ticket_id":ticket_id, "valid":true, "name":name, "email":email, "phone":phone})
-
 
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: Amount):
@@ -130,18 +135,12 @@ async def tts_payment(request: Request, response: Response, data: Amount):
 
 @app.post("/send-otp")
 async def send_otp(request:Request, email:Email = Body(...)):
-    # print(f"Email: {email.email}")
     request.session["otp"] = "12345"
-    # print(f"Stored OTP in session: {request.session.get('otp')}")
-    # print(f"Session ID: {request.session}")
     return JSONResponse(content={"success": True, "message": f"OTP sent to {email.email}"})
 
 @app.post("/verify-otp")
 async def verify_otp(request:Request, otp:OTP = Body(...)):
     stored_otp = request.session.get("otp")
-    # print(f"Retrieved OTP from session: {stored_otp}")
-    # print(f"Received OTP from request: {otp.otp}")
-    # print(f"Session ID: {request.session}")
     
     if stored_otp == otp.otp:
         return JSONResponse(content={"success": True, "message": "OTP verified successfully"})
@@ -216,15 +215,22 @@ async def verify_signature(request: Request):
     except razorpay.errors.SignatureVerificationError:
         return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
 
-@app.post("/verify-ticket")
+
+@app.post("/verify-ticket") # ticket validation via QR scannig
 async def verify_ticket(request:Request, ticket:Ticket):
-    # print(f"Verifying ticket: {ticket.ticket_id}")
-    
-    is_valid = await verify_ticket_admin(ticket=ticket.ticket_id)  # Replace with actual validation logic
+
+    is_valid = await verify_ticket_admin(ticket=ticket.ticket_id) 
     
     return JSONResponse(content={"valid": is_valid})
 
-@app.post("/verify-ticket-id")
+
+@app.get("/generate/ticket/event") # a simple form to submit the ticket tID
+async def generate_ticket_event(request:Request):
+
+    return templates.TemplateResponse("generate.html", {"request":request})
+
+
+@app.post("/verify-ticket-id") # if ticket id is valid them it will generate ticket page.
 async def generate_ticket(request:Request, ticket_id:Ticket):
     is_ticket = await just_check_ticket(ticket=ticket_id.ticket_id)
     request.session["ticket"] = ticket_id.ticket_id
@@ -233,11 +239,77 @@ async def generate_ticket(request:Request, ticket_id:Ticket):
     else:
         return RedirectResponse(url = '/generate/ticket',  status_code=HTTP_303_SEE_OTHER)
 
-@app.get("/generate/ticket/event")
-async def generate_ticket_event(request:Request):
-    return templates.TemplateResponse("generate.html", {"request":request})
 
 
 
+# =======================================================ADMIN Setup===================================================================
 
+@app.get("/")
+async def get_admin_page(request:Request):
+    admin = request.session.get("session_user")
 
+    if admin:
+        pass # open dashboard
+    else:
+        return templates_admin.TemplateResponse("index.html", {"request":request})
+
+@app.get("/admin/login")
+async def admin_login(request:Request):
+    admin = request.session.get("session_user")
+    if admin:
+        return RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)
+    return templates_admin.TemplateResponse("login.html", {"request":request})
+
+@app.get("/admin/signup")
+async def admin_signup(request:Request):
+    admin = request.session.get("session_user")
+    if admin:
+        return RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)  
+    return templates_admin.TemplateResponse("signup.html", {"request":request})
+
+@app.get("/admin/dashboard")
+async def admin_dashboard(request:Request):
+    admin = request.cookies.get("session_user_admin")
+    print(admin)
+    if admin:
+        admin_dashboard_data = await getAdminDashboardData(email=admin)
+        totoal_active_events = admin_dashboard_data["total_active_events"]
+        total_events = admin_dashboard_data["total_events"]
+        total_users = admin_dashboard_data["total_attendies"]
+        recent_events = admin_dashboard_data["recent_events"]
+
+        return templates_admin.TemplateResponse("dashboard.html", {"request":request, "recent_events":recent_events, "total_events":total_events, "total_users":total_users, "totoal_active_events":totoal_active_events})
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/send-otp")
+async def admin_send_otp(request:Request, email:OTP):
+    print(email.email)
+    # time.sleep(5)
+    return True
+
+@app.post("/admin/signup")
+async def admin_signup(request:Request, data:Signup):
+    if data.otp != "12345": # real otp will be done here instead of constant
+        return 0
+    else:
+        admin_exist = await checkAdmin(email=data.email)
+        if not admin_exist:
+            await createNewAdmin(admin_data=data)
+            return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+        else:
+            return -1
+
+@app.post("/admin/login")
+async def admin_login(request:Request, data:Login, response: Response):
+    admin_exist = await checkAdmin(email=data.email)
+    if admin_exist:
+        is_password = await checkAdminPassword(email=data.email, password=data.password)
+        if is_password:
+            response =  RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)
+            response.set_cookie(key="session_user_admin", value=data.email, httponly=True, max_age=60*60*24*7)
+            return response
+        else:
+            return -1
+    else:
+        return 0

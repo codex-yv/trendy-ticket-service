@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Sign Up - Trendy Ticket Service</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#8b5cf6'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    },
+                    fontFamily: {
+                        'pacifico': ['Pacifico', 'serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-logo {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .floating-label {
+            transition: all 0.3s ease;
+        }
+        
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 800;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuDyYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4"
+    style="background-image: url('https://readdy.ai/api/search-image?query=Dark%20atmospheric%20nightclub%20party%20scene%20with%20silhouettes%20of%20people%20dancing%2C%20dim%20purple%20and%20blue%20lighting%2C%20open%20ground%20outdoor%20festival%20atmosphere%2C%20crowd%20enjoying%20music%2C%20stage%20lights%20in%20background%2C%20moody%20cinematic%20lighting%2C%20professional%20photography%2C%20high%20contrast%2C%20party%20vibes%2C%20electronic%20music%20festival%20setting%2C%20dramatic%20shadows%20and%20highlights%2C%20modern%20nightlife%20scene&amp;width=1920&amp;height=1080&amp;seq=party-bg-001&amp;orientation=landscape'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <div class="glass-card rounded-2xl p-8 w-full max-w-md shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="glass-logo rounded-xl px-6 py-3 inline-block mb-4">
+                <h1 class="font-pacifico text-2xl text-white">Trendy Ticket Service</h1>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2">Admin Sign Up</h2>
+            <p class="text-gray-300 font-medium">Join our exclusive admin platform</p>
+        </div>
+        <form class="space-y-6">
+            <div class="relative">
+                <input class="input-field w-full px-4 py-3 rounded-lg text-white focus:outline-none" id="fullName"
+                    placeholder="Full Name" required type="text" />
+            </div>
+            <div class="relative">
+                <div class="flex gap-2">
+                    <input class="input-field flex-1 px-4 py-3 rounded-lg text-white focus:outline-none" id="email"
+                        placeholder="Email Address" required type="email" />
+                    <button
+                        class="btn-secondary px-4 py-3 rounded-lg text-white font-medium whitespace-nowrap !rounded-button"
+                        id="sendOtpBtn" type="button">
+                        Send OTP
+                    </button>
+                </div>
+            </div>
+            <div class="relative hidden" id="otpField">
+                <input class="input-field w-full px-4 py-3 rounded-lg text-white focus:outline-none" id="otp"
+                    maxlength="6" placeholder="Enter OTP" type="text" />
+            </div>
+            <div class="relative">
+                <input class="input-field w-full px-4 py-3 rounded-lg text-white focus:outline-none" id="phone"
+                    placeholder="Phone Number" required type="tel" />
+            </div>
+            <div class="relative">
+                <input class="input-field w-full px-4 py-3 pr-12 rounded-lg text-white focus:outline-none" id="password"
+                    placeholder="Create Password" required type="password" />
+                <button
+                    class="absolute right-4 top-3 text-gray-300 hover:text-white transition-colors w-6 h-6 flex items-center justify-center"
+                    id="togglePassword" type="button">
+                    <i class="ri-eye-line ri-lg"></i>
+                </button>
+            </div>
+            <div class="text-center">
+                <a class="text-gray-300 hover:text-white transition-colors font-medium" href="#">
+                    I am already a user
+                </a>
+            </div>
+            <button
+                class="btn-primary w-full py-3 rounded-lg text-white font-bold text-lg whitespace-nowrap !rounded-button"
+                type="submit">
+                Sign Up
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        // Global variable to track OTP status
+        let otpSent = false;
+        
+        // Global function to show popup messages
+        function showPopup(message, isSuccess) {
+            const popup = document.createElement('div');
+            popup.className = `fixed top-4 right-4 px-6 py-4 rounded-lg shadow-lg text-white font-medium z-50 ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
+            popup.textContent = message;
+            document.body.appendChild(popup);
+
+            // Remove popup after 3 seconds
+            setTimeout(() => {
+                popup.style.opacity = '0';
+                popup.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => popup.remove(), 300);
+            }, 3000);
+        }
+    </script>
+    
+    <script id="otp-functionality">
+        document.addEventListener('DOMContentLoaded', function () {
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const otpField = document.getElementById('otpField');
+            const emailInput = document.getElementById('email');
+
+            sendOtpBtn.addEventListener('click', async function () {
+                const email = emailInput.value.trim();
+                
+                // Validate email
+                if (!email) {
+                    showPopup('Please enter an email address', false);
+                    return;
+                }
+
+                // Show loading state
+                const originalText = sendOtpBtn.textContent;
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.innerHTML = '<i class="ri-loader-4-line ri-lg animate-spin"></i>';
+                
+                try {
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/send-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: email })
+                    });
+
+                    const data = await response.json();
+
+                    // Check if server returned true/success
+                    if (response.ok && data) {
+                        showPopup('Email sent successfully', true);
+                        otpField.classList.remove('hidden');
+                        sendOtpBtn.textContent = 'Resend';
+                        otpSent = true; // Mark OTP as sent
+                    } else {
+                        showPopup('Error in sending OTP', false);
+                        sendOtpBtn.textContent = originalText;
+                    }
+                } catch (error) {
+                    showPopup('Error in sending OTP', false);
+                    sendOtpBtn.textContent = originalText;
+                } finally {
+                    sendOtpBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+    
+    <script id="signup-form">
+        document.addEventListener('DOMContentLoaded', function () {
+            const signupForm = document.querySelector('form');
+            const signupBtn = signupForm.querySelector('button[type="submit"]');
+
+            signupForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Get form values
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const otp = document.getElementById('otp').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const password = document.getElementById('password').value.trim();
+
+                // Validate all fields
+                if (!fullName || !email || !phone || !password) {
+                    showPopup('Please fill in all fields', false);
+                    return;
+                }
+
+                // Check if OTP was sent
+                if (!otpSent) {
+                    showPopup('Please send OTP first', false);
+                    return;
+                }
+
+                // Check if OTP is filled
+                if (!otp) {
+                    showPopup('Please provide OTP', false);
+                    return;
+                }
+
+                // Show loading state
+                const originalText = signupBtn.textContent;
+                signupBtn.disabled = true;
+                signupBtn.innerHTML = '<i class="ri-loader-4-line ri-lg animate-spin"></i>';
+
+                try {
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            fullname: fullName,
+                            email: email,
+                            otp: otp,
+                            phone: phone,
+                            password: password
+                        })
+                    });
+
+                    // Check response status
+                    if (response.redirected) {
+                        // Redirect to login page if server redirects
+                        window.location.href = response.url;
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    // Handle different response codes
+                    if (data === 0) {
+                        showPopup('Wrong OTP', false);
+                    } else if (data === -1) {
+                        showPopup('Email already exists', false);
+                    } else {
+                        // If we get here but no redirect, assume success and redirect to login
+                        window.location.href = '/admin/login';
+                    }
+                } catch (error) {
+                    showPopup('Error during signup', false);
+                } finally {
+                    signupBtn.textContent = originalText;
+                    signupBtn.disabled = false;
+                }
+            });
+        });
+    </script>
+    
+    <script id="password-toggle">
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = togglePassword.querySelector('i');
+            
+            togglePassword.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeIcon.className = isPassword ? 'ri-eye-off-line ri-lg' : 'ri-eye-line ri-lg';
+            });
+        });
+    </script>
+</body>
+</html>

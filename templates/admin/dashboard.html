@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#06b6d4'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&amp;display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="px-6 pt-6">
+        <nav class="bg-white/80 backdrop-blur-lg border border-white/20 rounded-2xl shadow-lg max-w-4xl mx-auto">
+            <div class="px-8 py-4">
+                <div class="flex items-center justify-between space-x-4">
+                    <div class="flex items-center space-x-8">
+                        <div class="font-['Pacifico'] text-xl text-primary">Trendy Ticket Service</div>
+                        <div class="flex items-center space-x-6">
+                            <button
+                                class="bg-primary text-white px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2">
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-dashboard-line text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium">Dashboard</span>
+                            </button>
+                            <button
+                                class="text-gray-600 hover:text-primary px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2 transition-colors">
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-calendar-event-line text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium">Events</span>
+                            </button>
+                            <button
+                                class="text-gray-600 hover:text-primary px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2 transition-colors">
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-shield-line text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium">Security</span>
+                            </button>
+                            <button
+                                class="bg-gradient-to-r from-secondary to-cyan-500 text-white px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2">
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-add-circle-line text-sm"></i>
+                                </div>
+                                <span class="text-sm font-medium">Host Event</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button
+                        class="text-gray-600 hover:bg-red-500 hover:text-white hover:font-bold px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2 transition-all duration-200">
+                        <div class="w-4 h-4 flex items-center justify-center">
+                            <i class="ri-logout-box-line text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <main class="px-6 py-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Trendy Ticket Service - Admin Dashboard</h1>
+                <p class="text-gray-600">Welcome back! Here's what's happening with your events today.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-primary to-indigo-600 rounded-lg flex items-center justify-center">
+                            <i class="ri-calendar-check-line text-white text-xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-gray-900">{{total_events}}</p>
+                            <p class="text-sm text-gray-600">Total Events</p>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Total Events Hosted</h3>
+                    <p class="text-sm text-gray-600">All-time events created</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-secondary to-cyan-600 rounded-lg flex items-center justify-center">
+                            <i class="ri-live-line text-white text-xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-gray-900">{{totoal_active_events}}</p>
+                            <p class="text-sm text-gray-600">Currently Live</p>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Total Active Events</h3>
+                    <p class="text-sm text-gray-600">Events happening now</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div
+                            class="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
+                            <i class="ri-group-line text-white text-xl"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-gray-900">{{total_users}}</p>
+                            <p class="text-sm text-gray-600">Total Users</p>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">Total Users</h3>
+                    <p class="text-sm text-gray-600">Registered users</p>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Recent Events</h2>
+                        <button
+                            class="text-primary hover:text-indigo-700 text-sm font-medium flex items-center space-x-1">
+                            <span>View All</span>
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-arrow-right-line text-sm"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        {% for event in recent_events %}
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                            <div class="flex items-center space-x-4">
+                                <div
+                                    class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                    <i class="ri-music-line text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900">{{ event[0] }}</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                        <div class="flex items-center space-x-1">
+                                            <div class="w-4 h-4 flex items-center justify-center">
+                                                <i class="ri-user-line text-xs"></i>
+                                            </div>
+                                            <span>{{ event[2] }} attendees</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1">
+                                            <div class="w-4 h-4 flex items-center justify-center">
+                                                <i class="ri-calendar-line text-xs"></i>
+                                            </div>
+                                            <span>{{ event[1] }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span
+                                    class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">Active</span>
+                                <button class="text-gray-400 hover:text-gray-600">
+                                    <div class="w-5 h-5 flex items-center justify-center">
+                                        <i class="ri-more-line"></i>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script id="navigation-interactions">
+        document.addEventListener('DOMContentLoaded', function () {
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (this.textContent.trim().includes('Dashboard')) return;
+                    navButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('text-gray-600', 'hover:text-primary');
+                    });
+                    if (!this.textContent.trim().includes('Logout')) {
+                        this.classList.remove('text-gray-600', 'hover:text-primary');
+                        this.classList.add('bg-primary', 'text-white');
+                    }
+                });
+            });
+        });
+    </script>
+    <script id="card-hover-effects">
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.bg-white');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'transform 0.2s ease-in-out';
+                });
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'yp9DM_64IgipyQ_Uy5am_Q';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#8B4513',
+                        secondary: '#F5E6D3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        .cinematic-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 50%, #1a1a1a 100%);
+        }
+
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 27, 46, 0.9) 50%, rgba(26, 26, 26, 0.9) 100%),
+                url('https://readdy.ai/api/search-image?query=cinematic%20dark%20theater%20with%20golden%20ticket%20stubs%20floating%20in%20the%20air%2C%20dramatic%20lighting%2C%20film%20noir%20atmosphere%2C%20elegant%20vintage%20movie%20theater%20interior%20with%20velvet%20seats%20and%20ornate%20details%2C%20moody%20shadows%20and%20warm%20golden%20highlights%2C%20professional%20photography%2C%20high%20contrast%2C%20sophisticated%20ambiance&width=1920&height=1080&seq=hero001&orientation=landscape');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .card-cinematic {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(139, 69, 19, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+    <nav class="fixed top-0 left-0 right-0 z-50 mx-2 sm:mx-4 mt-2 sm:mt-4">
+        <div class="cinematic-bg rounded-xl sm:rounded-2xl px-4 sm:px-6 py-3 sm:py-4 shadow-2xl backdrop-blur-sm">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-primary rounded-lg">
+                        <i class="ri-ticket-2-line text-secondary text-lg sm:text-xl"></i>
+                    </div>
+                    <span class="font-['Pacifico'] text-lg sm:text-2xl text-secondary">Trendy Ticket Service</span>
+                </div>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a class="text-secondary hover:text-primary transition-all duration-300" href="#hero">Home</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300"
+                        href="#features">Features</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300" href="#preview">Preview</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300"
+                        href="#security">Security</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300" href="#footer">Options</a>
+                </div>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <button
+                        class="hidden sm:block px-4 sm:px-6 py-2 bg-secondary text-gray-900 !rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap text-sm sm:text-base">
+                        Login
+                    </button>
+                    <button
+                        class="px-3 sm:px-6 py-2 bg-primary text-secondary !rounded-button hover:bg-opacity-90 transition-all glow-effect whitespace-nowrap text-sm sm:text-base">
+                        Sign Up
+                    </button>
+                    <button class="lg:hidden w-8 h-8 flex items-center justify-center text-secondary"
+                        id="mobileMenuToggle">
+                        <i class="ri-menu-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="lg:hidden mt-4 bg-gray-800 bg-opacity-95 rounded-xl p-4 transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300"
+                id="mobileMenu">
+                <div class="flex flex-col space-y-3">
+                    <a class="text-secondary hover:text-primary transition-all duration-300 py-2 mobile-nav-link"
+                        href="#hero">Home</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300 py-2 mobile-nav-link"
+                        href="#features">Features</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300 py-2 mobile-nav-link"
+                        href="#preview">Preview</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300 py-2 mobile-nav-link"
+                        href="#security">Security</a>
+                    <a class="text-secondary hover:text-primary transition-all duration-300 py-2 mobile-nav-link"
+                        href="#footer">Options</a>
+                    <div class="pt-2 sm:hidden">
+                        <button
+                            class="w-full px-4 py-2 bg-secondary text-gray-900 !rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap text-sm">
+                            Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!--修改前-->
+    <section class="hero-bg min-h-screen flex items-center justify-center pt-20 sm:pt-24" id="hero">
+        <div class="w-full max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center">
+                <h1
+                    class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-secondary mb-4 sm:mb-6 leading-tight px-2">
+                    Trusted by Events, Loved by Attendees.
+                </h1>
+                <p class="text-lg sm:text-xl md:text-2xl text-secondary mb-3 sm:mb-4 opacity-90">
+                    Trendy Ticket Service
+                </p>
+                <p class="text-base sm:text-lg text-secondary opacity-80 max-w-3xl mx-auto mb-8 sm:mb-12 px-4">
+                    Complete Ticket Management System - Generate, Verify &amp; Secure Event Tickets with Advanced
+                    Analytics and Real-time Data Management
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4">
+                    <button
+                        class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-primary text-secondary text-base sm:text-lg !rounded-button hover:bg-opacity-90 transition-all glow-effect whitespace-nowrap">
+                        Access Dashboard
+                    </button>
+                    <button
+                        class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-transparent border-2 border-secondary text-secondary text-base sm:text-lg !rounded-button hover:bg-secondary hover:text-gray-900 transition-all whitespace-nowrap">
+                        View Demo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 sm:py-16 lg:py-20 bg-gray-900" id="features">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-secondary mb-4">Core Features</h2>
+                <p class="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
+                    Comprehensive ticket management solution with enterprise-grade security and analytics
+                </p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div
+                    class="card-cinematic p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20 hover:border-opacity-40 transition-all">
+                    <div
+                        class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-primary rounded-xl mb-4 sm:mb-6">
+                        <i class="ri-bank-card-line text-secondary text-xl sm:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-secondary mb-3 sm:mb-4">Payment Processing</h3>
+                    <p class="text-gray-300 leading-relaxed text-sm sm:text-base">
+                        Secure payment gateway integration with multiple payment methods, automated invoicing, and
+                        real-time transaction monitoring for seamless financial operations.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20 hover:border-opacity-40 transition-all">
+                    <div
+                        class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-primary rounded-xl mb-4 sm:mb-6">
+                        <i class="ri-ticket-line text-secondary text-xl sm:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-secondary mb-3 sm:mb-4">Ticket Generation</h3>
+                    <p class="text-gray-300 leading-relaxed text-sm sm:text-base">
+                        Dynamic ticket creation with QR codes, custom branding, batch generation capabilities, and
+                        automated delivery system for efficient event management.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-6 sm:p-8 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20 hover:border-opacity-40 transition-all">
+                    <div
+                        class="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center bg-primary rounded-xl mb-4 sm:mb-6">
+                        <i class="ri-shield-check-line text-secondary text-xl sm:text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-secondary mb-3 sm:mb-4">Verification System</h3>
+                    <p class="text-gray-300 leading-relaxed text-sm sm:text-base">
+                        Advanced security protocols with duplicate prevention, ticket expiry management, and real-time
+                        verification to ensure event integrity and prevent fraud.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 sm:py-16 lg:py-20 bg-gray-50" id="preview">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Dashboard Preview</h2>
+                <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+                    Experience the power of our comprehensive admin interface with real-time analytics and intuitive
+                    controls
+                </p>
+            </div>
+            <div class="card-cinematic rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 border border-gray-200">
+                <div class="grid lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="lg:col-span-1 space-y-4 order-2 lg:order-1">
+                        <div class="bg-secondary bg-opacity-10 rounded-xl p-3 sm:p-4">
+                            <h4 class="text-secondary font-semibold mb-3 text-sm sm:text-base">Quick Stats</h4>
+                            <div class="space-y-2 sm:space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300 text-xs sm:text-sm">Active Events</span>
+                                    <span class="text-secondary font-bold text-sm sm:text-base">247</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300 text-xs sm:text-sm">Tickets Sold</span>
+                                    <span class="text-secondary font-bold text-sm sm:text-base">15,432</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300 text-xs sm:text-sm">Revenue</span>
+                                    <span class="text-secondary font-bold text-sm sm:text-base">$89,250</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-300 text-xs sm:text-sm">Verified Today</span>
+                                    <span class="text-secondary font-bold text-sm sm:text-base">1,205</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 rounded-xl p-3 sm:p-4">
+                            <h4 class="text-secondary font-semibold mb-3 text-sm sm:text-base">Recent Activity</h4>
+                            <div class="space-y-1 sm:space-y-2 text-xs sm:text-sm">
+                                <div class="text-gray-300">Music Festival 2024 - 450 tickets verified</div>
+                                <div class="text-gray-300">Tech Conference - Payment processed</div>
+                                <div class="text-gray-300">Art Exhibition - New event created</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-3 order-1 lg:order-2">
+                        <div class="bg-secondary bg-opacity-5 rounded-xl p-3 sm:p-4 lg:p-6 min-h-80 sm:min-h-96">
+                            <div
+                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+                                <h4 class="text-secondary font-semibold text-base sm:text-lg">Event Management Dashboard
+                                </h4>
+                                <div
+                                    class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                                    <button
+                                        class="px-3 sm:px-4 py-2 bg-primary text-secondary text-xs sm:text-sm !rounded-button whitespace-nowrap">
+                                        Create Event
+                                    </button>
+                                    <button
+                                        class="px-3 sm:px-4 py-2 bg-secondary bg-opacity-20 text-secondary text-xs sm:text-sm !rounded-button whitespace-nowrap">
+                                        Export Data
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+                                <div class="bg-gray-800 rounded-lg p-3 sm:p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-secondary font-medium text-sm sm:text-base truncate pr-2">Summer
+                                            Music Fest</h5>
+                                        <span class="w-2 h-2 bg-green-400 rounded-full flex-shrink-0"></span>
+                                    </div>
+                                    <p class="text-gray-400 text-xs sm:text-sm mb-2">June 15, 2024</p>
+                                    <div class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-gray-300 truncate pr-2">Sold: 2,450/3,000</span>
+                                        <span class="text-green-400 flex-shrink-0">Active</span>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-800 rounded-lg p-3 sm:p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-secondary font-medium text-sm sm:text-base truncate pr-2">Tech
+                                            Innovation Summit</h5>
+                                        <span class="w-2 h-2 bg-yellow-400 rounded-full flex-shrink-0"></span>
+                                    </div>
+                                    <p class="text-gray-400 text-xs sm:text-sm mb-2">July 22, 2024</p>
+                                    <div class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-gray-300 truncate pr-2">Sold: 890/1,500</span>
+                                        <span class="text-yellow-400 flex-shrink-0">Pending</span>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-800 rounded-lg p-3 sm:p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-secondary font-medium text-sm sm:text-base truncate pr-2">Art
+                                            Gallery Opening</h5>
+                                        <span class="w-2 h-2 bg-blue-400 rounded-full flex-shrink-0"></span>
+                                    </div>
+                                    <p class="text-gray-400 text-xs sm:text-sm mb-2">August 5, 2024</p>
+                                    <div class="flex justify-between text-xs sm:text-sm">
+                                        <span class="text-gray-300 truncate pr-2">Sold: 156/300</span>
+                                        <span class="text-blue-400 flex-shrink-0">Draft</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800 rounded-lg p-3 sm:p-4">
+                                <h6 class="text-secondary font-medium mb-3 text-sm sm:text-base">Attendee Analytics</h6>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-center">
+                                    <div>
+                                        <div class="text-lg sm:text-2xl font-bold text-green-400">98.5%</div>
+                                        <div class="text-xs text-gray-400">Check-in Rate</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg sm:text-2xl font-bold text-blue-400">4.8</div>
+                                        <div class="text-xs text-gray-400">Avg Rating</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg sm:text-2xl font-bold text-yellow-400">15min</div>
+                                        <div class="text-xs text-gray-400">Avg Wait</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-lg sm:text-2xl font-bold text-purple-400">0.02%</div>
+                                        <div class="text-xs text-gray-400">Fraud Rate</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="py-12 sm:py-16 lg:py-20 bg-gray-900" id="security">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-3xl sm:text-4xl font-bold text-secondary mb-4">Security &amp; Data Management</h2>
+                <p class="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
+                    Enterprise-grade security features ensuring data integrity and preventing fraudulent activities
+                </p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-red-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-time-line text-red-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">Ticket Expiry System</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Automated expiry management with customizable time limits and grace periods for enhanced
+                        security.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-orange-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-forbid-line text-orange-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">Duplicate Prevention</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Advanced algorithms to detect and prevent duplicate ticket usage with real-time verification.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-green-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-database-2-line text-green-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">Comprehensive Data</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Complete attendee data collection with analytics, reporting, and export capabilities.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-qr-code-line text-blue-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">QR Code Security</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Encrypted QR codes with dynamic generation and secure verification protocols.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-purple-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-eye-line text-purple-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">Real-time Monitoring</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Live monitoring dashboard with instant alerts for suspicious activities and anomalies.
+                    </p>
+                </div>
+                <div
+                    class="card-cinematic p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-secondary border-opacity-20">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-indigo-600 bg-opacity-20 rounded-lg mb-3 sm:mb-4">
+                        <i class="ri-cloud-line text-indigo-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-semibold text-secondary mb-2 sm:mb-3">Cloud Backup</h4>
+                    <p class="text-gray-300 text-xs sm:text-sm">
+                        Automatic cloud backup with redundancy and disaster recovery for data protection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="cinematic-bg py-12 sm:py-16" id="footer">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
+                <div class="sm:col-span-2">
+                    <div class="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-primary rounded-lg">
+                            <i class="ri-ticket-2-line text-secondary text-lg sm:text-xl"></i>
+                        </div>
+                        <span class="font-['Pacifico'] text-lg sm:text-2xl text-secondary">Trendy Ticket Service</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
+                        The ultimate ticket management platform for events of all sizes. Secure, scalable, and
+                        feature-rich solution for modern event organizers.
+                    </p>
+                    <button
+                        class="w-full sm:w-auto px-6 sm:px-8 py-3 bg-primary text-secondary !rounded-button hover:bg-opacity-90 transition-all glow-effect whitespace-nowrap text-sm sm:text-base">
+                        Start Your Free Trial
+                    </button>
+                </div>
+                <div>
+                    <h4 class="text-secondary font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Platform</h4>
+                    <div class="space-y-2">
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Dashboard</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Analytics</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">API Documentation</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Integration</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-secondary font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support</h4>
+                    <div class="space-y-2">
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Help Center</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Contact Us</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Privacy Policy</a>
+                        <a class="block text-gray-300 hover:text-secondary transition-colors text-sm sm:text-base"
+                            href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-secondary border-opacity-20 pt-6 sm:pt-8">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p class="text-gray-400 text-xs sm:text-sm text-center sm:text-left">
+                        © 2024 Trendy Ticket Service. All rights reserved.
+                    </p>
+                    <div class="flex items-center space-x-4 sm:space-x-6">
+                        <a class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors"
+                            href="#">
+                            <i class="ri-twitter-line text-lg"></i>
+                        </a>
+                        <a class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors"
+                            href="#">
+                            <i class="ri-linkedin-line text-lg"></i>
+                        </a>
+                        <a class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors"
+                            href="#">
+                            <i class="ri-github-line text-lg"></i>
+                        </a>
+                        <a class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-secondary transition-colors"
+                            href="#">
+                            <i class="ri-mail-line text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <button
+        class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 bg-primary text-secondary rounded-full shadow-lg opacity-0 pointer-events-none transition-all duration-300 z-40 flex items-center justify-center hover:bg-opacity-90 glow-effect"
+        id="scrollToTop">
+        <i class="ri-arrow-up-line text-lg sm:text-xl"></i>
+    </button>
+    <script id="navbar-scroll">
+        document.addEventListener('DOMContentLoaded', function () {
+            const navbar = document.querySelector('nav');
+            const scrollToTopButton = document.getElementById('scrollToTop');
+            let lastScrollY = window.scrollY;
+            navbar.style.transition = 'transform 0.3s ease-in-out';
+            window.addEventListener('scroll', function () {
+                const currentScrollY = window.scrollY;
+                if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                    navbar.style.transform = 'translateY(-100%)';
+                } else {
+                    navbar.style.transform = 'translateY(0)';
+                }
+                if (currentScrollY > 300) {
+                    scrollToTopButton.style.opacity = '1';
+                    scrollToTopButton.style.pointerEvents = 'auto';
+                } else {
+                    scrollToTopButton.style.opacity = '0';
+                    scrollToTopButton.style.pointerEvents = 'none';
+                }
+                lastScrollY = currentScrollY;
+            });
+            scrollToTopButton.addEventListener('click', function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    <script id="card-hover-effects">
+        document.addEventListener('DOMContentLoaded', function () {
+            const cards = document.querySelectorAll('.card-cinematic');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-4px)';
+                    this.style.transition = 'all 0.3s ease';
+                });
+                card.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+    <script id="mobile-menu-and-navigation">
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuIcon = mobileMenuToggle.querySelector('i');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+            let isMenuOpen = false;
+            mobileMenuToggle.addEventListener('click', function () {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    mobileMenu.style.transform = 'translateY(0)';
+                    mobileMenu.style.opacity = '1';
+                    mobileMenu.style.pointerEvents = 'auto';
+                    mobileMenuIcon.className = 'ri-close-line text-xl';
+                } else {
+                    mobileMenu.style.transform = 'translateY(-4px)';
+                    mobileMenu.style.opacity = '0';
+                    mobileMenu.style.pointerEvents = 'none';
+                    mobileMenuIcon.className = 'ri-menu-line text-xl';
+                }
+            });
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    isMenuOpen = false;
+                    mobileMenu.style.transform = 'translateY(-4px)';
+                    mobileMenu.style.opacity = '0';
+                    mobileMenu.style.pointerEvents = 'none';
+                    mobileMenuIcon.className = 'ri-menu-line text-xl';
+                });
+            });
+            document.addEventListener('click', function (e) {
+                if (!mobileMenuToggle.contains(e.target) && !mobileMenu.contains(e.target) && isMenuOpen) {
+                    isMenuOpen = false;
+                    mobileMenu.style.transform = 'translateY(-4px)';
+                    mobileMenu.style.opacity = '0';
+                    mobileMenu.style.pointerEvents = 'none';
+                    mobileMenuIcon.className = 'ri-menu-line text-xl';
+                }
+            });
+        });
+    </script>
+    <script id="button-interactions">
+        document.addEventListener('DOMContentLoaded', function () {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-1px)';
+                    this.style.transition = 'all 0.2s ease';
+                });
+                button.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0)';
+                });
+                button.addEventListener('mousedown', function () {
+                    this.style.transform = 'translateY(1px)';
+                });
+                button.addEventListener('mouseup', function () {
+                    this.style.transform = 'translateY(-1px)';
+                });
+            });
+        });
+    </script>
+    <!-- <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'MBki4FJUnXd5UggVDGLlBg';
+        window.host = 'readdy.ai';
+    </script> -->
+</body>
+
+</html>
