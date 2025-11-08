@@ -43,7 +43,7 @@ async def hostEvent(hosting:object, email:str):
         "total_generated_tickets": 0,
         "created_at": f"{ISTdate()} {ISTTime()}",
         "logged_out": "",
-        "is_active": False,
+        "is_active": True,
     })
     event_infos = [str(result.inserted_id), (hosting.event_name).title(), hosting.event_token]
     await updateEventsStatus(email, event_infos)

@@ -275,7 +275,7 @@
                             </button>
                         </div>
                     </div>
-                    <button
+                    <button id="logout-button"
                         class="text-gray-600 hover:bg-red-500 hover:text-white hover:font-bold px-4 py-2 !rounded-button whitespace-nowrap flex items-center space-x-2 transition-all duration-200">
                         <div class="w-4 h-4 flex items-center justify-center">
                             <i class="ri-logout-box-line text-sm"></i>
@@ -710,6 +710,7 @@
             const eventsButton = document.getElementById('events-button');
             const securityButton = document.getElementById('security-button');
             const hostEventButton = document.getElementById('host-event-button');
+            const logoutButton = document.getElementById('logout-button');
             const dashboardSection = document.getElementById('dashboard-section');
             const eventsSection = document.getElementById('events-section');
             const securitySection = document.getElementById('security-section');
@@ -839,6 +840,41 @@
                 
                 // Fetch event token from server
                 fetchEventToken();
+            });
+            
+            // Logout button click handler
+            logoutButton.addEventListener('click', async function() {
+                try {
+                    // Show loading state
+                    logoutButton.innerHTML = '<div class="spinner"></div><span class="text-sm font-medium">Logging out...</span>';
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'logout_request'
+                        }),
+                        credentials: 'include' // Include cookies for session authentication
+                    });
+                    
+                    // Handle redirect response
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    } else if (response.status === 303) {
+                        window.location.href = '/admin/login';
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error during logout:', error);
+                    // Restore logout button even on error
+                    logoutButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-logout-box-line text-sm"></i></div><span class="text-sm font-medium">Logout</span>';
+                    showToast('Failed to logout. Please try again.', true);
+                }
             });
             
             // Helper function to update navigation button styles
@@ -1721,23 +1757,6 @@
                         currentEventIdToDelete = null;
                     }
                 });
-            });
-            
-            // Original navigation interactions for other buttons
-            navButtons.forEach(button => {
-                if (!button.id.includes('dashboard-button') && !button.id.includes('events-button') && !button.id.includes('security-button') && !button.id.includes('host-event-button')) {
-                    button.addEventListener('click', function () {
-                        if (this.textContent.trim().includes('Dashboard')) return;
-                        navButtons.forEach(btn => {
-                            btn.classList.remove('bg-primary', 'text-white');
-                            btn.classList.add('text-gray-600', 'hover:text-primary');
-                        });
-                        if (!this.textContent.trim().includes('Logout')) {
-                            this.classList.remove('text-gray-600', 'hover:text-primary');
-                            this.classList.add('bg-primary', 'text-white');
-                        }
-                    });
-                }
             });
         });
     </script>

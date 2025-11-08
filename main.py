@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Form, Body, HTTPException, status, Depends, Response
+from fastapi import FastAPI, Request, Form, Body, HTTPException, status, Depends, Response
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -10,7 +10,6 @@ import secrets
 import uuid
 from urllib.parse import quote
 import razorpay
-import time
 
 from schemas.ticketSchema import Ticket
 from schemas.paymentSchemas import Payment
@@ -251,11 +250,11 @@ async def get_admin_page(request:Request):
     admin = request.session.get("session_user")
 
     if admin:
-        pass # open dashboard
+        return RedirectResponse(url = '/admin/dashboard')
     else:
         return templates_admin.TemplateResponse("index.html", {"request":request})
 
-@app.get("/admin/login")
+@app.get( "/admin/login")
 async def admin_login(request:Request):
     admin = request.session.get("session_user")
     if admin:
@@ -394,5 +393,15 @@ async def admin_host_event(request:Request, hosting:Hosting):
             return True 
         else:
             return False
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/logout")
+async def admin_logout(request:Request, response:Response, x:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        response = RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+        response.delete_cookie("session_user_admin")
+        return response
     else:
         return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
