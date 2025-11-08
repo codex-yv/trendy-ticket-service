@@ -17,6 +17,7 @@ from schemas.paymentSchemas import Payment
 from schemas.emailSchemas import Email, OTP
 from schemas.amountSchemas import Amount
 from schemas.adminAuthSchemas import Login, Signup, OTP
+from schemas.adminDashboardSchemas import Useless, Hosting
 
 from security.encrypyAmt import encryptt
 from config.payment_config import key_id, key_seceret
@@ -24,10 +25,11 @@ from config.payment_config import key_id, key_seceret
 from utils.tickPost import insert_ticket
 from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
 
-from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData
-from utils.adminPosts import createNewAdmin
+from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees
+from utils.adminPosts import createNewAdmin, hostEvent
+from utils.adminPuts import updateAdminKey, deteleEvent
 
-from utils.general import get_amount, share_ticket
+from utils.general import get_amount, share_ticket, generate_event_token
 from utils.IST import ISTdate, ISTTime
 
 templates = Jinja2Templates(directory="templates")
@@ -308,8 +310,89 @@ async def admin_login(request:Request, data:Login, response: Response):
         if is_password:
             response =  RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)
             response.set_cookie(key="session_user_admin", value=data.email, httponly=True, max_age=60*60*24*7)
+
             return response
         else:
             return -1
     else:
         return 0
+
+@app.post("/admin/ui/dashboard")
+async def admin_dashboard(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        admin_data_dict = await getAdminDashboardData(email=admin)
+        return admin_data_dict
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+
+@app.post("/admin/ui/events")
+async def admin_events(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        eventss = await getAdminEvents(email=admin)
+        print(eventss)
+        return eventss
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/events/attendees")
+async def admin_event_attendees(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        attendees = await getEventAttendees(email=admin, event_id=data.x)
+        return attendees
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/security")
+async def admin_security(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        admin_data_dict = await getAdminSecurityData(email=admin)
+        return admin_data_dict
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/security/api_key")
+async def admin_api_key(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        new_key = await updateAdminKey(email=admin)
+        return new_key
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/security/event_token")
+async def admin_event_token(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        await deteleEvent(email=admin, event_id=data.x)
+        
+        return True
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+
+@app.post("/admin/ui/host-event")
+async def admin_host_event_section(request:Request, data:Useless):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        event_token = await generate_event_token()
+        request.session["event_token"] = event_token
+        return event_token
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/admin/ui/host-event/host")
+async def admin_host_event(request:Request, hosting:Hosting):
+    admin = request.cookies.get("session_user_admin")
+    if admin:
+        if request.session.get("event_token") == hosting.event_token:
+            await hostEvent(hosting=hosting, email=admin)
+            return True 
+        else:
+            return False
+    else:
+        return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)

@@ -6,7 +6,7 @@ from config.otp_configs import sender_email, sender_key
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import asyncio
-
+import uuid
 
 async def get_amount(mesh:str):
     try:
@@ -18,6 +18,10 @@ async def get_amount(mesh:str):
         return str(data)
     except IndexError:
         pass
+
+async def generate_event_token():
+    return str(uuid.uuid4())
+
 
 async def share_ticket(ticket: str, email:str):
 

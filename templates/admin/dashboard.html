@@ -186,6 +186,54 @@
         .toast.error {
             background: #ef4444;
         }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            min-width: 200px;
+        }
     </style>
 </head>
 
@@ -254,7 +302,7 @@
                                 <i class="ri-calendar-check-line text-white text-xl"></i>
                             </div>
                             <div class="text-right">
-                                <p class="text-2xl font-bold text-gray-900">{{total_events}}</p>
+                                <p class="text-2xl font-bold text-gray-900" id="total-events">0</p>
                                 <p class="text-sm text-gray-600">Total Events</p>
                             </div>
                         </div>
@@ -268,7 +316,7 @@
                                 <i class="ri-live-line text-white text-xl"></i>
                             </div>
                             <div class="text-right">
-                                <p class="text-2xl font-bold text-gray-900">{{totoal_active_events}}</p>
+                                <p class="text-2xl font-bold text-gray-900" id="total-active-events">0</p>
                                 <p class="text-sm text-gray-600">Currently Live</p>
                             </div>
                         </div>
@@ -282,7 +330,7 @@
                                 <i class="ri-group-line text-white text-xl"></i>
                             </div>
                             <div class="text-right">
-                                <p class="text-2xl font-bold text-gray-900">{{total_users}}</p>
+                                <p class="text-2xl font-bold text-gray-900" id="total-users">0</p>
                                 <p class="text-sm text-gray-600">Total Users</p>
                             </div>
                         </div>
@@ -306,43 +354,12 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            {% for event in recent_events %}
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                <div class="flex items-center space-x-4">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                                        <i class="ri-music-line text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">{{ event[0] }}</h3>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-user-line text-xs"></i>
-                                                </div>
-                                                <span>{{ event[2] }} attendees</span>
-                                            </div>
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-calendar-line text-xs"></i>
-                                                </div>
-                                                <span>{{ event[1] }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                    <span
-                                        class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">Active</span>
-                                    <button class="text-gray-400 hover:text-gray-600">
-                                        <div class="w-5 h-5 flex items-center justify-center">
-                                            <i class="ri-more-line"></i>
-                                        </div>
-                                    </button>
-                                </div>
+                        <div class="space-y-4" id="recent-events-list">
+                            <!-- Recent events will be populated here by JavaScript -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="ri-calendar-line text-4xl mb-2"></i>
+                                <p>No recent events found</p>
                             </div>
-                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -350,7 +367,6 @@
             
             <!-- Events Section -->
             <div id="events-section" class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8" style="display: none;">
-                <!-- Events section content remains the same -->
                 <div class="p-6 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xl font-semibold text-gray-900">Events Management</h2>
@@ -365,100 +381,22 @@
                     
                     <!-- Active Events Content -->
                     <div id="active-events-content">
-                        <div class="space-y-4">
-                            <!-- Active Event 1 -->
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                <div class="flex items-center space-x-4">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                                        <i class="ri-music-line text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">Summer Music Festival 2023</h3>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-calendar-line text-xs"></i>
-                                                </div>
-                                                <span>Aug 15, 2023 - Aug 17, 2023</span>
-                                            </div>
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-ticket-line text-xs"></i>
-                                                </div>
-                                                <span>1,250 tickets sold</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="view-attendees-btn bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors" data-event="Summer Music Festival 2023">
-                                    View Attendees
-                                </button>
-                            </div>
-                            
-                            <!-- Active Event 2 -->
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                <div class="flex items-center space-x-4">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-                                        <i class="ri-mic-line text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">Tech Conference 2023</h3>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-calendar-line text-xs"></i>
-                                                </div>
-                                                <span>Sep 10, 2023 - Sep 12, 2023</span>
-                                            </div>
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-ticket-line text-xs"></i>
-                                                </div>
-                                                <span>850 tickets sold</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="view-attendees-btn bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors" data-event="Tech Conference 2023">
-                                    View Attendees
-                                </button>
+                        <div class="space-y-4" id="active-events-list">
+                            <!-- Active events will be populated here by JavaScript -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="ri-calendar-line text-4xl mb-2"></i>
+                                <p>No active events found</p>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Inactive Events Content -->
                     <div id="inactive-events-content" class="hidden">
-                        <div class="space-y-4">
-                            <!-- Inactive Event 1 -->
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
-                                <div class="flex items-center space-x-4">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-600 rounded-lg flex items-center justify-center">
-                                        <i class="ri-music-line text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold text-gray-900">Spring Jazz Festival</h3>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-calendar-line text-xs"></i>
-                                                </div>
-                                                <span>Apr 20, 2023 - Apr 22, 2023</span>
-                                            </div>
-                                            <div class="flex items-center space-x-1">
-                                                <div class="w-4 h-4 flex items-center justify-center">
-                                                    <i class="ri-ticket-line text-xs"></i>
-                                                </div>
-                                                <span>980 tickets sold</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button class="view-attendees-btn bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors" data-event="Spring Jazz Festival">
-                                    View Attendees
-                                </button>
+                        <div class="space-y-4" id="inactive-events-list">
+                            <!-- Inactive events will be populated here by JavaScript -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="ri-calendar-line text-4xl mb-2"></i>
+                                <p>No inactive events found</p>
                             </div>
                         </div>
                     </div>
@@ -467,7 +405,6 @@
             
             <!-- Security Section -->
             <div id="security-section" class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8" style="display: none;">
-                <!-- Security section content remains the same -->
                 <div class="p-6 border-b border-gray-100">
                     <div class="flex items-center justify-between">
                         <h2 class="text-xl font-semibold text-gray-900">Security Settings</h2>
@@ -493,7 +430,7 @@
                                 <input 
                                     type="password" 
                                     id="api-key-input"
-                                    value="sk_live_51Mn8jqK5dG8pX9vT2wB7yR6zA4xNcVbLmQwE9sH3jF6kP8rT5gY7uV2xZ4bN6mK8pQ9wE3sR5tY7uV2xZ"
+                                    value=""
                                     readonly
                                     class="api-key-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-800 font-mono text-sm"
                                 />
@@ -505,29 +442,11 @@
                     <!-- Event Tokens Section -->
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Event Tokens</h3>
-                        <div class="space-y-4">
-                            <!-- Event Token 1 -->
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                                <div class="flex items-center justify-between mb-3">
-                                    <h4 class="font-medium text-gray-900">Summer Music Festival 2023</h4>
-                                    <div class="flex items-center space-x-2">
-                                        <button class="toggle-token text-gray-500 hover:text-gray-700" data-token="token-1">
-                                            <i class="ri-eye-line"></i>
-                                        </button>
-                                        <button class="delete-token text-gray-500 hover:text-red-500" data-event="Summer Music Festival 2023" data-token="token-1">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="relative">
-                                    <input 
-                                        type="password" 
-                                        id="token-1"
-                                        value="evt_5dG8pX9vT2wB7yR6zA4xNcVbLmQwE9sH3jF6kP8rT5gY7uV2xZ4bN6mK8pQ9wE3sR5tY7uV2xZ"
-                                        readonly
-                                        class="token-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-800 font-mono text-sm"
-                                    />
-                                </div>
+                        <div id="event-tokens-list" class="space-y-4">
+                            <!-- Event tokens will be populated here by JavaScript -->
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="ri-key-line text-4xl mb-2"></i>
+                                <p>No event tokens found</p>
                             </div>
                         </div>
                     </div>
@@ -608,6 +527,21 @@
                                 >
                             </div>
                         </div>
+
+                        <!-- Ticket Cost -->
+                        <div>
+                            <label for="ticket-cost" class="block text-sm font-medium text-gray-700 mb-2 required-field">Ticket Cost</label>
+                            <input 
+                                type="number" 
+                                id="ticket-cost" 
+                                name="ticket-cost"
+                                min="0"
+                                step="0.01"
+                                required
+                                class="form-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Enter ticket cost"
+                            >
+                        </div>
                         
                         <!-- Ticket Expiry Date -->
                         <div>
@@ -660,7 +594,7 @@
                                     <input 
                                         type="text" 
                                         id="event-token"
-                                        value="evt_new_${Date.now().toString(36)}_${Math.random().toString(36).substr(2, 9)}"
+                                        value=""
                                         readonly
                                         class="token-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-800 font-mono text-sm"
                                     >
@@ -697,6 +631,14 @@
         <div class="flex items-center space-x-2">
             <i class="ri-checkbox-circle-line"></i>
             <span id="toast-message">Operation completed successfully!</span>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-gray-700 font-medium">Processing...</p>
         </div>
     </div>
 
@@ -777,6 +719,20 @@
             const activeEventsContent = document.getElementById('active-events-content');
             const inactiveEventsContent = document.getElementById('inactive-events-content');
             
+            // Dashboard elements
+            const totalEventsElement = document.getElementById('total-events');
+            const totalActiveEventsElement = document.getElementById('total-active-events');
+            const totalUsersElement = document.getElementById('total-users');
+            const recentEventsList = document.getElementById('recent-events-list');
+            
+            // Events elements
+            const activeEventsList = document.getElementById('active-events-list');
+            const inactiveEventsList = document.getElementById('inactive-events-list');
+            
+            // Security elements
+            const apiKeyInput = document.getElementById('api-key-input');
+            const eventTokensList = document.getElementById('event-tokens-list');
+            
             // Host Event Form Elements
             const hostEventForm = document.getElementById('host-event-form');
             const eventTokenInput = document.getElementById('event-token');
@@ -785,10 +741,14 @@
             const sameAsEndDateCheckbox = document.getElementById('same-as-end-date');
             const endDateInput = document.getElementById('end-date');
             const ticketExpiryDateInput = document.getElementById('ticket-expiry-date');
+            const hostEventSubmitBtn = document.getElementById('host-event-submit');
             
             // Toast notification
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toast-message');
+            
+            // Loading overlay
+            const loadingOverlay = document.getElementById('loading-overlay');
             
             // Modal elements
             const attendeesModal = document.getElementById('attendees-modal');
@@ -796,14 +756,10 @@
             const modalTitle = document.getElementById('modal-title');
             const attendeesList = document.getElementById('attendees-list');
             const filterTabs = document.querySelectorAll('.filter-tab');
-            const viewAttendeesBtns = document.querySelectorAll('.view-attendees-btn');
             
             // Security section elements
-            const apiKeyInput = document.getElementById('api-key-input');
             const toggleApiKeyBtn = document.getElementById('toggle-api-key');
             const regenerateApiKeyBtn = document.getElementById('regenerate-api-key');
-            const toggleTokenBtns = document.querySelectorAll('.toggle-token');
-            const deleteTokenBtns = document.querySelectorAll('.delete-token');
             
             // Warning modals
             const regenerateWarningModal = document.getElementById('regenerate-warning-modal');
@@ -817,12 +773,17 @@
             const deleteTokenMessage = document.getElementById('delete-token-message');
             
             let currentTokenToDelete = null;
+            let currentEventIdToDelete = null;
+            let currentEventIdForAttendees = null;
             
             // Show dashboard section by default
             dashboardSection.style.display = 'block';
             eventsSection.style.display = 'none';
             securitySection.style.display = 'none';
             hostEventSection.style.display = 'none';
+            
+            // Load dashboard data on initial page load
+            fetchDashboardData();
             
             // Dashboard button click handler
             dashboardButton.addEventListener('click', function() {
@@ -833,6 +794,9 @@
                 
                 // Update nav button styles
                 updateNavButtonStyles(this);
+                
+                // Fetch and update dashboard data
+                fetchDashboardData();
             });
             
             // Events button click handler
@@ -844,6 +808,9 @@
                 
                 // Update nav button styles
                 updateNavButtonStyles(this);
+                
+                // Fetch and update events data
+                fetchEventsData();
             });
             
             // Security button click handler
@@ -855,6 +822,9 @@
                 
                 // Update nav button styles
                 updateNavButtonStyles(this);
+                
+                // Fetch and update security data
+                fetchSecurityData();
             });
             
             // Host Event button click handler
@@ -867,8 +837,8 @@
                 // Update nav button styles
                 updateNavButtonStyles(this);
                 
-                // Generate new event token
-                generateNewEventToken();
+                // Fetch event token from server
+                fetchEventToken();
             });
             
             // Helper function to update navigation button styles
@@ -879,6 +849,561 @@
                 });
                 activeButton.classList.remove('text-gray-600', 'hover:text-primary');
                 activeButton.classList.add('bg-primary', 'text-white');
+            }
+            
+            // Function to fetch dashboard data from FastAPI server
+            async function fetchDashboardData() {
+                try {
+                    // Show loading state
+                    dashboardButton.innerHTML = '<div class="spinner"></div><span class="text-sm font-medium">Loading...</span>';
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/dashboard', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'dashboard_request'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const adminData = await response.json();
+                    
+                    // Update dashboard with received data
+                    updateDashboard(adminData);
+                    
+                    // Restore dashboard button
+                    dashboardButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-dashboard-line text-sm"></i></div><span class="text-sm font-medium">Dashboard</span>';
+                    
+                } catch (error) {
+                    console.error('Error fetching dashboard data:', error);
+                    showToast('Failed to load dashboard data', true);
+                    
+                    // Restore dashboard button even on error
+                    dashboardButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-dashboard-line text-sm"></i></div><span class="text-sm font-medium">Dashboard</span>';
+                }
+            }
+            
+            // Function to update dashboard with received data
+            function updateDashboard(adminData) {
+                // Update total events
+                totalEventsElement.textContent = adminData.total_events || 0;
+                
+                // Update total active events
+                totalActiveEventsElement.textContent = adminData.total_active_events || 0;
+                
+                // Update total users (assuming total_attendies is meant to be total_users)
+                totalUsersElement.textContent = adminData.total_attendies || 0;
+                
+                // Update recent events
+                updateRecentEvents(adminData.recent_events || []);
+            }
+            
+            // Function to update recent events list
+            function updateRecentEvents(recentEvents) {
+                // Clear existing content
+                recentEventsList.innerHTML = '';
+                
+                if (recentEvents.length === 0) {
+                    recentEventsList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-calendar-line text-4xl mb-2"></i>
+                            <p>No recent events found</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Add each recent event to the list
+                recentEvents.forEach(event => {
+                    const eventElement = document.createElement('div');
+                    eventElement.className = 'flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100';
+                    
+                    eventElement.innerHTML = `
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                <i class="ri-music-line text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${event[0]}</h3>
+                                <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-user-line text-xs"></i>
+                                        </div>
+                                        <span>${event[2]} attendees</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-calendar-line text-xs"></i>
+                                        </div>
+                                        <span>${event[1]}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span
+                                class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">Active</span>
+                            <button class="text-gray-400 hover:text-gray-600">
+                                <div class="w-5 h-5 flex items-center justify-center">
+                                    <i class="ri-more-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                    `;
+                    
+                    recentEventsList.appendChild(eventElement);
+                });
+            }
+            
+            // Function to fetch events data from FastAPI server
+            async function fetchEventsData() {
+                try {
+                    // Show loading state
+                    eventsButton.innerHTML = '<div class="spinner"></div><span class="text-sm font-medium">Loading...</span>';
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'events_request'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const eventsData = await response.json();
+                    
+                    // Update events section with received data
+                    updateEventsSection(eventsData);
+                    
+                    // Restore events button
+                    eventsButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-calendar-event-line text-sm"></i></div><span class="text-sm font-medium">Events</span>';
+                    
+                } catch (error) {
+                    console.error('Error fetching events data:', error);
+                    showToast('Failed to load events data', true);
+                    
+                    // Restore events button even on error
+                    eventsButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-calendar-event-line text-sm"></i></div><span class="text-sm font-medium">Events</span>';
+                }
+            }
+            
+            // Function to update events section with received data
+            function updateEventsSection(eventsData) {
+                // Clear existing content
+                activeEventsList.innerHTML = '';
+                inactiveEventsList.innerHTML = '';
+                
+                if (eventsData.length === 0) {
+                    activeEventsList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-calendar-line text-4xl mb-2"></i>
+                            <p>No events found</p>
+                        </div>
+                    `;
+                    inactiveEventsList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-calendar-line text-4xl mb-2"></i>
+                            <p>No events found</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Process each event in the array
+                eventsData.forEach(eventObj => {
+                    // Extract event ID and event info from the object
+                    const eventId = Object.keys(eventObj)[0];
+                    const eventInfo = eventObj[eventId];
+                    
+                    const eventElement = document.createElement('div');
+                    eventElement.className = 'flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100';
+                    
+                    // Determine status and styling
+                    const isActive = eventInfo.status === true;
+                    const statusClass = isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+                    const statusText = isActive ? 'Active' : 'Inactive';
+                    const iconGradient = isActive ? 'from-green-500 to-emerald-500' : 'from-gray-400 to-gray-600';
+                    
+                    eventElement.innerHTML = `
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-10 h-10 bg-gradient-to-br ${iconGradient} rounded-lg flex items-center justify-center">
+                                <i class="ri-music-line text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900">${eventInfo.event_name}</h3>
+                                <div class="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-ticket-line text-xs"></i>
+                                        </div>
+                                        <span>${eventInfo.total_tickets_sold} tickets sold</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-calendar-line text-xs"></i>
+                                        </div>
+                                        <span>${eventInfo.event_date}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="${statusClass} px-3 py-1 rounded-full text-xs font-medium">${statusText}</span>
+                            <button class="view-attendees-btn bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors" data-event-id="${eventId}" data-event-name="${eventInfo.event_name}">
+                                View Attendees
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Add to appropriate list based on status
+                    if (isActive) {
+                        activeEventsList.appendChild(eventElement);
+                    } else {
+                        inactiveEventsList.appendChild(eventElement);
+                    }
+                });
+                
+                // Add event listeners to view attendees buttons
+                addViewAttendeesEventListeners();
+            }
+            
+            // Function to add event listeners to view attendees buttons
+            function addViewAttendeesEventListeners() {
+                const viewAttendeesBtns = document.querySelectorAll('.view-attendees-btn');
+                viewAttendeesBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const eventId = this.getAttribute('data-event-id');
+                        const eventName = this.getAttribute('data-event-name');
+                        currentEventIdForAttendees = eventId;
+                        
+                        modalTitle.textContent = `Attendees - ${eventName}`;
+                        fetchAttendeesData(eventId);
+                        attendeesModal.classList.add('active');
+                    });
+                });
+            }
+            
+            // Function to fetch attendees data from FastAPI server
+            async function fetchAttendeesData(eventId) {
+                try {
+                    // Show loading overlay
+                    showLoadingOverlay();
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/events/attendees', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: eventId
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const attendeesData = await response.json();
+                    
+                    // Update attendees modal with received data
+                    updateAttendeesModal(attendeesData);
+                    
+                    // Hide loading overlay
+                    hideLoadingOverlay();
+                    
+                } catch (error) {
+                    console.error('Error fetching attendees data:', error);
+                    hideLoadingOverlay();
+                    showToast('Failed to load attendees data', true);
+                }
+            }
+            
+            // Function to update attendees modal with received data
+            function updateAttendeesModal(attendeesData) {
+                // Clear existing content
+                attendeesList.innerHTML = '';
+                
+                if (attendeesData.length === 0) {
+                    attendeesList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-user-line text-4xl mb-2"></i>
+                            <p>No attendees found for this event</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Add each attendee to the list
+                attendeesData.forEach(attendee => {
+                    const attendeeCard = document.createElement('div');
+                    attendeeCard.className = 'attendee-card';
+                    
+                    // Determine if attended based on attending_time
+                    const attended = attendee.attending_time && attendee.attending_time !== 'N/A';
+                    attendeeCard.setAttribute('data-status', attended ? 'attended' : 'not-attended');
+                    
+                    attendeeCard.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-4">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-gray-900">${attendee.name}</h4>
+                                        <p class="text-sm text-gray-600 mt-1">Ticket ID: ${attendee.ticket_id}</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-lg font-bold text-primary">$${attendee.amount}</p>
+                                        <span class="status-badge ${attended ? 'status-attended' : 'status-not-attended'}">
+                                            ${attended ? 'Attended' : 'Not Attended'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="view-more-btn ml-4 text-primary hover:text-indigo-700 font-medium text-sm flex items-center space-x-1">
+                                <span>View More</span>
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                        </div>
+                        <div class="attendee-details mt-4">
+                            <div class="space-y-2">
+                                <div class="detail-row">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value">${attendee.email}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Phone:</span>
+                                    <span class="detail-value">${attendee.phone}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Ticket Amount:</span>
+                                    <span class="detail-value font-semibold text-primary">$${attendee.amount}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Payment ID:</span>
+                                    <span class="detail-value font-mono text-sm">${attendee.payment_id}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Payment Time:</span>
+                                    <span class="detail-value">${attendee.payment_time}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Attending Time:</span>
+                                    <span class="detail-value">${attendee.attending_time || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    attendeesList.appendChild(attendeeCard);
+                    
+                    // Add click event to view more button
+                    const viewMoreBtn = attendeeCard.querySelector('.view-more-btn');
+                    const detailsSection = attendeeCard.querySelector('.attendee-details');
+                    
+                    viewMoreBtn.addEventListener('click', function() {
+                        const isExpanded = detailsSection.classList.contains('expanded');
+                        
+                        if (isExpanded) {
+                            detailsSection.classList.remove('expanded');
+                            this.innerHTML = '<span>View More</span><i class="ri-arrow-down-s-line"></i>';
+                        } else {
+                            detailsSection.classList.add('expanded');
+                            this.innerHTML = '<span>View Less</span><i class="ri-arrow-up-s-line"></i>';
+                        }
+                    });
+                });
+            }
+            
+            // Function to fetch security data from FastAPI server
+            async function fetchSecurityData() {
+                try {
+                    // Show loading state
+                    securityButton.innerHTML = '<div class="spinner"></div><span class="text-sm font-medium">Loading...</span>';
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/security', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'security_request'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const securityData = await response.json();
+                    
+                    // Update security section with received data
+                    updateSecuritySection(securityData);
+                    
+                    // Restore security button
+                    securityButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-shield-line text-sm"></i></div><span class="text-sm font-medium">Security</span>';
+                    
+                } catch (error) {
+                    console.error('Error fetching security data:', error);
+                    showToast('Failed to load security data', true);
+                    
+                    // Restore security button even on error
+                    securityButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-shield-line text-sm"></i></div><span class="text-sm font-medium">Security</span>';
+                }
+            }
+            
+            // Function to update security section with received data
+            function updateSecuritySection(securityData) {
+                // Update API key
+                apiKeyInput.value = securityData.key_id || '';
+                
+                // Update event tokens
+                updateEventTokens(securityData.event_tokens || []);
+            }
+            
+            // Function to update event tokens list
+            function updateEventTokens(eventTokens) {
+                // Clear existing content
+                eventTokensList.innerHTML = '';
+                
+                if (eventTokens.length === 0) {
+                    eventTokensList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-key-line text-4xl mb-2"></i>
+                            <p>No event tokens found</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Add each event token to the list
+                eventTokens.forEach((token, index) => {
+                    const tokenElement = document.createElement('div');
+                    tokenElement.className = 'bg-gray-50 rounded-lg p-4 border border-gray-200';
+                    const tokenId = `token-${index}`;
+                    
+                    tokenElement.innerHTML = `
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-gray-900">${token[1]}</h4>
+                            <div class="flex items-center space-x-2">
+                                <button class="toggle-token text-gray-500 hover:text-gray-700" data-token="${tokenId}">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button class="delete-token text-gray-500 hover:text-red-500" data-event="${token[1]}" data-token="${tokenId}" data-event-id="${token[0]}">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="${tokenId}"
+                                value="${token[2]}"
+                                readonly
+                                class="token-field w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-gray-800 font-mono text-sm"
+                            />
+                        </div>
+                    `;
+                    
+                    eventTokensList.appendChild(tokenElement);
+                });
+                
+                // Add event listeners to the new token elements
+                addTokenEventListeners();
+            }
+            
+            // Function to fetch event token from FastAPI server
+            async function fetchEventToken() {
+                try {
+                    // Show loading state
+                    hostEventButton.innerHTML = '<div class="spinner"></div><span class="text-sm font-medium">Loading...</span>';
+                    
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/admin/ui/host-event', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'host_event_request'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const eventToken = await response.json();
+                    
+                    // Update event token input with received token
+                    eventTokenInput.value = eventToken;
+                    
+                    // Restore host event button
+                    hostEventButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-add-circle-line text-sm"></i></div><span class="text-sm font-medium">Host Event</span>';
+                    
+                } catch (error) {
+                    console.error('Error fetching event token:', error);
+                    showToast('Failed to load event token', true);
+                    
+                    // Restore host event button even on error
+                    hostEventButton.innerHTML = '<div class="w-4 h-4 flex items-center justify-center"><i class="ri-add-circle-line text-sm"></i></div><span class="text-sm font-medium">Host Event</span>';
+                }
+            }
+            
+            // Function to add event listeners to token elements
+            function addTokenEventListeners() {
+                // Token toggle functionality
+                const toggleTokenBtns = document.querySelectorAll('.toggle-token');
+                toggleTokenBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const tokenId = this.getAttribute('data-token');
+                        const tokenInput = document.getElementById(tokenId);
+                        const isPassword = tokenInput.type === 'password';
+                        tokenInput.type = isPassword ? 'text' : 'password';
+                        this.innerHTML = isPassword ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
+                    });
+                });
+                
+                // Delete token functionality
+                const deleteTokenBtns = document.querySelectorAll('.delete-token');
+                deleteTokenBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const eventName = this.getAttribute('data-event');
+                        const tokenId = this.getAttribute('data-token');
+                        const eventId = this.getAttribute('data-event-id');
+                        currentTokenToDelete = tokenId;
+                        currentEventIdToDelete = eventId;
+                        
+                        deleteTokenTitle.textContent = `Delete Token for ${eventName}`;
+                        deleteTokenMessage.textContent = `Are you sure you want to delete the token for "${eventName}"? This action cannot be undone and will revoke access for this event.`;
+                        deleteTokenModal.classList.add('active');
+                    });
+                });
+            }
+            
+            // Function to show loading overlay
+            function showLoadingOverlay() {
+                loadingOverlay.classList.add('active');
+            }
+            
+            // Function to hide loading overlay
+            function hideLoadingOverlay() {
+                loadingOverlay.classList.remove('active');
             }
             
             // Tab switching functionality
@@ -901,13 +1426,6 @@
             });
             
             // Host Event Form Functionality
-            
-            // Generate new event token
-            function generateNewEventToken() {
-                const timestamp = Date.now().toString(36);
-                const random = Math.random().toString(36).substr(2, 9);
-                eventTokenInput.value = `evt_new_${timestamp}_${random}`;
-            }
             
             // Copy token to clipboard
             copyTokenBtn.addEventListener('click', function() {
@@ -942,13 +1460,13 @@
             // Clear form functionality
             clearFormBtn.addEventListener('click', function() {
                 hostEventForm.reset();
-                generateNewEventToken();
+                fetchEventToken();
                 ticketExpiryDateInput.disabled = false;
                 showToast('Form cleared successfully!');
             });
             
             // Form submission
-            hostEventForm.addEventListener('submit', function(e) {
+            hostEventForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Validate form
@@ -957,31 +1475,74 @@
                     return;
                 }
                 
-                // Get form data
-                const formData = new FormData(hostEventForm);
-                const eventData = {
-                    eventName: formData.get('event-name'),
-                    companyName: formData.get('company-name'),
-                    eventLocation: formData.get('event-location'),
-                    startDate: formData.get('start-date'),
-                    endDate: formData.get('end-date'),
-                    ticketExpiryDate: formData.get('ticket-expiry-date'),
-                    ticketLimit: formData.get('ticket-limit'),
-                    eventToken: eventTokenInput.value
-                };
+                // Show loading overlay
+                showLoadingOverlay();
+                hostEventSubmitBtn.disabled = true;
                 
-                // In a real application, you would send this data to your backend
-                console.log('Event data to be submitted:', eventData);
-                
-                // Show success message
-                showToast('Event hosted successfully! Redirecting to events...');
-                
-                // Reset form and redirect to events section after delay
-                setTimeout(() => {
-                    hostEventForm.reset();
-                    generateNewEventToken();
-                    eventsButton.click(); // Redirect to events section
-                }, 2000);
+                try {
+                    // Get form data
+                    const formData = new FormData(hostEventForm);
+                    
+                    // Convert all values to strings to match the backend model
+                    const eventData = {
+                        event_name: String(formData.get('event-name') || ''),
+                        company_name: String(formData.get('company-name') || ''),
+                        event_location: String(formData.get('event-location') || ''),
+                        start_date: String(formData.get('start-date') || ''),
+                        end_date: String(formData.get('end-date') || ''),
+                        ticket_cost: String(formData.get('ticket-cost') || '0'),
+                        expiry: String(formData.get('ticket-expiry-date') || ''),
+                        ticket_limit: String(formData.get('ticket-limit') || '0'),
+                        event_token: String(eventTokenInput.value || '')
+                    };
+                    
+                    console.log('Sending event data:', eventData);
+                    
+                    // Send POST request to FastAPI server to host event
+                    const response = await fetch('/admin/ui/host-event/host', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(eventData),
+                        credentials: 'include' // Include cookies for session authentication
+                    });
+                    
+                    if (!response.ok) {
+                        // Check if it's a redirect response (303)
+                        if (response.status === 303) {
+                            window.location.href = '/admin/login';
+                            return;
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const hostResult = await response.json();
+                    
+                    // Hide loading overlay
+                    hideLoadingOverlay();
+                    hostEventSubmitBtn.disabled = false;
+                    
+                    if (hostResult === true) {
+                        // Show success message
+                        showToast('Event hosted successfully! Redirecting to events...');
+                        
+                        // Reset form and redirect to events section after delay
+                        setTimeout(() => {
+                            hostEventForm.reset();
+                            fetchEventToken();
+                            eventsButton.click(); // Redirect to events section
+                        }, 2000);
+                    } else {
+                        showToast('Failed to host event. Please try again.', true);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error hosting event:', error);
+                    hideLoadingOverlay();
+                    hostEventSubmitBtn.disabled = false;
+                    showToast('Failed to host event. Please try again.', true);
+                }
             });
             
             // Toast notification function
@@ -993,16 +1554,6 @@
                     toast.className = isError ? 'toast error' : 'toast';
                 }, 3000);
             }
-            
-            // View Attendees button functionality
-            viewAttendeesBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const eventName = this.getAttribute('data-event');
-                    modalTitle.textContent = `Attendees - ${eventName}`;
-                    populateAttendeesList(eventName);
-                    attendeesModal.classList.add('active');
-                });
-            });
             
             // Close modal functionality
             closeModalBtn.addEventListener('click', function() {
@@ -1028,6 +1579,20 @@
                 });
             });
             
+            // Function to filter attendees based on status
+            function filterAttendees(filter) {
+                const cards = attendeesList.querySelectorAll('.attendee-card');
+                
+                cards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = '';
+                    } else {
+                        const status = card.getAttribute('data-status');
+                        card.style.display = status === filter ? '' : 'none';
+                    }
+                });
+            }
+            
             // API Key toggle functionality
             toggleApiKeyBtn.addEventListener('click', function() {
                 const isPassword = apiKeyInput.type === 'password';
@@ -1046,57 +1611,104 @@
             });
             
             // Confirm regenerate
-            confirmRegenerateBtn.addEventListener('click', function() {
-                // Generate a new API key (in a real app, this would call your backend)
-                const newApiKey = generateNewApiKey();
-                apiKeyInput.value = newApiKey;
+            confirmRegenerateBtn.addEventListener('click', async function() {
+                // Show loading overlay
+                showLoadingOverlay();
                 regenerateWarningModal.classList.remove('active');
                 
-                // Show success message
-                showToast('API key regenerated successfully!');
-            });
-            
-            // Token toggle functionality
-            toggleTokenBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tokenId = this.getAttribute('data-token');
-                    const tokenInput = document.getElementById(tokenId);
-                    const isPassword = tokenInput.type === 'password';
-                    tokenInput.type = isPassword ? 'text' : 'password';
-                    this.innerHTML = isPassword ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>';
-                });
-            });
-            
-            // Delete token functionality
-            deleteTokenBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const eventName = this.getAttribute('data-event');
-                    const tokenId = this.getAttribute('data-token');
-                    currentTokenToDelete = tokenId;
+                try {
+                    // Send POST request to FastAPI server to regenerate API key
+                    const response = await fetch('/admin/ui/security/api_key', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            x: 'regenerate_api_key'
+                        })
+                    });
                     
-                    deleteTokenTitle.textContent = `Delete Token for ${eventName}`;
-                    deleteTokenMessage.textContent = `Are you sure you want to delete the token for "${eventName}"? This action cannot be undone and will revoke access for this event.`;
-                    deleteTokenModal.classList.add('active');
-                });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const newKey = await response.json();
+                    
+                    // Update API key input with the new key
+                    apiKeyInput.value = newKey;
+                    
+                    // Hide loading overlay
+                    hideLoadingOverlay();
+                    
+                    // Show success message
+                    showToast('API key regenerated successfully!');
+                    
+                } catch (error) {
+                    console.error('Error regenerating API key:', error);
+                    hideLoadingOverlay();
+                    showToast('Failed to regenerate API key', true);
+                }
             });
             
             // Cancel delete token
             cancelDeleteBtn.addEventListener('click', function() {
                 deleteTokenModal.classList.remove('active');
                 currentTokenToDelete = null;
+                currentEventIdToDelete = null;
             });
             
             // Confirm delete token
-            confirmDeleteBtn.addEventListener('click', function() {
-                if (currentTokenToDelete) {
-                    // In a real app, this would call your backend to delete the token
-                    const tokenElement = document.querySelector(`[data-token="${currentTokenToDelete}"]`).closest('.bg-gray-50');
-                    tokenElement.remove();
+            confirmDeleteBtn.addEventListener('click', async function() {
+                if (currentTokenToDelete && currentEventIdToDelete) {
+                    // Show loading overlay
+                    showLoadingOverlay();
                     deleteTokenModal.classList.remove('active');
-                    currentTokenToDelete = null;
                     
-                    // Show success message
-                    showToast('Token deleted successfully!');
+                    try {
+                        // Send POST request to FastAPI server to delete token
+                        const response = await fetch('/admin/ui/security/event_token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                x: currentEventIdToDelete
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const deleteResult = await response.json();
+                        
+                        // Hide loading overlay
+                        hideLoadingOverlay();
+                        
+                        if (deleteResult === true) {
+                            // Remove the token element from the DOM
+                            const tokenElement = document.querySelector(`[data-token="${currentTokenToDelete}"]`).closest('.bg-gray-50');
+                            tokenElement.remove();
+                            
+                            // Show success message
+                            showToast('Token deleted successfully!');
+                            
+                            // Refresh the security data to ensure consistency
+                            fetchSecurityData();
+                        } else {
+                            showToast('Failed to delete token', true);
+                        }
+                        
+                        currentTokenToDelete = null;
+                        currentEventIdToDelete = null;
+                        
+                    } catch (error) {
+                        console.error('Error deleting token:', error);
+                        hideLoadingOverlay();
+                        showToast('Failed to delete token', true);
+                        currentTokenToDelete = null;
+                        currentEventIdToDelete = null;
+                    }
                 }
             });
             
@@ -1106,6 +1718,7 @@
                     if (e.target === modal) {
                         modal.classList.remove('active');
                         currentTokenToDelete = null;
+                        currentEventIdToDelete = null;
                     }
                 });
             });
@@ -1126,142 +1739,6 @@
                     });
                 }
             });
-            
-            // Function to populate attendees list with dummy data
-            function populateAttendeesList(eventName) {
-                // Clear existing list
-                attendeesList.innerHTML = '';
-                
-                // Generate dummy attendees data
-                const attendees = generateDummyAttendees(eventName);
-                
-                // Populate list with attendees data
-                attendees.forEach(attendee => {
-                    const attendeeCard = document.createElement('div');
-                    attendeeCard.className = 'attendee-card';
-                    attendeeCard.setAttribute('data-status', attendee.attended ? 'attended' : 'not-attended');
-                    
-                    attendeeCard.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-4">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">${attendee.name}</h4>
-                                        <p class="text-sm text-gray-600 mt-1">Ticket ID: ${attendee.ticketId}</p>
-                                    </div>
-                                    <span class="status-badge ${attendee.attended ? 'status-attended' : 'status-not-attended'}">
-                                        ${attendee.attended ? 'Attended' : 'Not Attended'}
-                                    </span>
-                                </div>
-                            </div>
-                            <button class="view-more-btn ml-4 text-primary hover:text-indigo-700 font-medium text-sm flex items-center space-x-1">
-                                <span>View More</span>
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                        </div>
-                        <div class="attendee-details mt-4">
-                            <div class="space-y-2">
-                                <div class="detail-row">
-                                    <span class="detail-label">Email:</span>
-                                    <span class="detail-value">${attendee.email}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Phone:</span>
-                                    <span class="detail-value">${attendee.phone}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Payment ID:</span>
-                                    <span class="detail-value font-mono text-sm">${attendee.paymentId}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Payment Time:</span>
-                                    <span class="detail-value">${attendee.paymentTime}</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Attending Time:</span>
-                                    <span class="detail-value">${attendee.attendingTime}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    attendeesList.appendChild(attendeeCard);
-                    
-                    // Add click event to view more button
-                    const viewMoreBtn = attendeeCard.querySelector('.view-more-btn');
-                    const detailsSection = attendeeCard.querySelector('.attendee-details');
-                    
-                    viewMoreBtn.addEventListener('click', function() {
-                        const isExpanded = detailsSection.classList.contains('expanded');
-                        
-                        if (isExpanded) {
-                            detailsSection.classList.remove('expanded');
-                            this.innerHTML = '<span>View More</span><i class="ri-arrow-down-s-line"></i>';
-                        } else {
-                            detailsSection.classList.add('expanded');
-                            this.innerHTML = '<span>View Less</span><i class="ri-arrow-up-s-line"></i>';
-                        }
-                    });
-                });
-            }
-            
-            // Function to filter attendees based on status
-            function filterAttendees(filter) {
-                const cards = attendeesList.querySelectorAll('.attendee-card');
-                
-                cards.forEach(card => {
-                    if (filter === 'all') {
-                        card.style.display = '';
-                    } else {
-                        const status = card.getAttribute('data-status');
-                        card.style.display = status === filter ? '' : 'none';
-                    }
-                });
-            }
-            
-            // Function to generate dummy attendees data
-            function generateDummyAttendees(eventName) {
-                const names = [
-                    'John Smith', 'Emma Johnson', 'Michael Brown', 'Sarah Davis', 'Robert Wilson',
-                    'Jennifer Miller', 'William Taylor', 'Linda Anderson', 'David Thomas', 'Susan Jackson'
-                ];
-                
-                const attendees = [];
-                
-                for (let i = 0; i < 8; i++) {
-                    const name = names[i % names.length];
-                    const email = name.toLowerCase().replace(' ', '.') + '@example.com';
-                    const phone = `+1 (555) ${100 + i}-${1000 + i}`;
-                    const attended = Math.random() > 0.3; // 70% chance of attended
-                    const ticketId = `TKT-${eventName.substring(0, 3).toUpperCase()}-${1000 + i}`;
-                    const paymentId = `PAY-${eventName.substring(0, 3).toUpperCase()}-${2000 + i}`;
-                    const paymentTime = `2023-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`;
-                    const attendingTime = attended ? `2023-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')} ${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}` : 'N/A';
-                    
-                    attendees.push({
-                        name,
-                        email,
-                        phone,
-                        attended,
-                        ticketId,
-                        paymentId,
-                        paymentTime,
-                        attendingTime
-                    });
-                }
-                
-                return attendees;
-            }
-            
-            // Function to generate a new API key
-            function generateNewApiKey() {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                let result = 'sk_live_';
-                for (let i = 0; i < 40; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return result;
-            }
         });
     </script>
     <script id="card-hover-effects">
