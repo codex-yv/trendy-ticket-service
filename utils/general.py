@@ -7,7 +7,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import asyncio
 import uuid
-
+from datetime import datetime
 async def get_amount(mesh:str):
     try:
         amount_mesh = mesh.split("#")[1]
@@ -21,6 +21,31 @@ async def get_amount(mesh:str):
 
 async def generate_event_token():
     return str(uuid.uuid4())
+
+
+async def is_expiry_exceeded(date: str, time: str, exp_date:str) -> bool:
+    """
+    Checks if the given expiry date and time exceed the default expiry date.
+    
+    Args:
+        date (str): Date in format 'DD/MM/YY'
+        time (str): Time in format 'HH:MM AM/PM'
+        
+    Returns:
+        bool: True if given expiry > default expiry, else False
+    """
+    # Default expiry date in ISO format
+    default_expiry_str = exp_date
+    default_expiry = datetime.strptime(default_expiry_str, "%Y-%m-%dT%H:%M")
+
+    # Combine given date and time
+    given_expiry_str = f"{date} {time}"
+
+    # Parse given date & time (DD/MM/YY and 12-hour time)
+    given_expiry = datetime.strptime(given_expiry_str, "%d/%m/%Y %I:%M %p")
+
+    # Compare the two
+    return given_expiry > default_expiry
 
 
 async def share_ticket(ticket: str, email:str):

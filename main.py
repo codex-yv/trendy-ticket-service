@@ -1,3 +1,5 @@
+import email
+from this import d
 from fastapi import FastAPI, Request, Form, Body, HTTPException, status, Depends, Response
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -24,9 +26,9 @@ from config.payment_config import key_id, key_seceret
 from utils.tickPost import insert_ticket
 from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
 
-from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees, checkRedirectTTS, verifyAdminforScan
+from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees, checkRedirectTTS, verifyAdminforScan, checkTokenExpiry
 from utils.adminPosts import createNewAdmin, hostEvent
-from utils.adminPuts import updateAdminKey, deteleEvent
+from utils.adminPuts import updateAdminKey, deteleEvent, updateActiveEventsCounts
 
 from utils.general import get_amount, share_ticket, generate_event_token
 from utils.IST import ISTdate, ISTTime
@@ -143,25 +145,29 @@ async def tts_payment(request: Request, response: Response, data: RedirectTTS):
     is_redirect = await checkRedirectTTS(key=data.key, token=data.token)
     print(is_redirect)
     if is_redirect:
-        redirect_data = {"token": data.token, "amount": data.amount}
+        is_expired = await checkTokenExpiry(token=data.token)
+        if not is_expired:
+            redirect_data = {"token": data.token, "amount": data.amount}
 
-        idd = str(uuid.uuid4())
+            idd = str(uuid.uuid4())
 
-        file_path = "database/redirectTTS.json"
-        await update_json(file_path=file_path, key=idd, value=redirect_data)
-        
-        safe_url = quote(idd, safe="")
-        
-        # Check if request is from fetch (has Accept: application/json header)
-        accept_header = request.headers.get("accept", "")
-        if "application/json" in accept_header:
-            # Return JSON response with redirect URL for fetch requests
-            redirect_url = f"/{safe_url}"
-            json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
-            return json_response
+            file_path = "database/redirectTTS.json"
+            await update_json(file_path=file_path, key=idd, value=redirect_data)
+            
+            safe_url = quote(idd, safe="")
+            
+            # Check if request is from fetch (has Accept: application/json header)
+            accept_header = request.headers.get("accept", "")
+            if "application/json" in accept_header:
+                # Return JSON response with redirect URL for fetch requests
+                redirect_url = f"/{safe_url}"
+                json_response = JSONResponse(content={"redirect_url": redirect_url, "success": True})
+                return json_response
+            else:
+                response =  RedirectResponse(url=f"/", status_code=303)
+                return response
         else:
-            response =  RedirectResponse(url=f"/", status_code=303)
-            return response
+            return JSONResponse(content={"success": False, "message": "Event Token is expired!"}, status_code=400)
     else:
         return JSONResponse(content={"success": False, "message": "Invalid key or token"}, status_code=400)
 
@@ -321,6 +327,7 @@ async def admin_dashboard(request:Request):
     admin = request.cookies.get("session_user_admin")
     print(admin)
     if admin:
+        await updateActiveEventsCounts(email=admin)
         admin_dashboard_data = await getAdminDashboardData(email=admin)
         totoal_active_events = admin_dashboard_data["total_active_events"]
         total_events = admin_dashboard_data["total_events"]
@@ -368,6 +375,7 @@ async def admin_login(request:Request, data:Login, response: Response):
 async def admin_dashboard(request:Request, data:Useless):
     admin = request.cookies.get("session_user_admin")
     if admin:
+        await updateActiveEventsCounts(email=admin)
         admin_data_dict = await getAdminDashboardData(email=admin)
         return admin_data_dict
     else:
@@ -378,6 +386,7 @@ async def admin_dashboard(request:Request, data:Useless):
 async def admin_events(request:Request, data:Useless):
     admin = request.cookies.get("session_user_admin")
     if admin:
+        await updateActiveEventsCounts(email=admin)
         eventss = await getAdminEvents(email=admin)
         print(eventss)
         return eventss

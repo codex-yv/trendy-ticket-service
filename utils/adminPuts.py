@@ -1,4 +1,7 @@
 from hmac import new
+from utils.general import is_expiry_exceeded
+from utils.IST import ISTdate, ISTTime
+from fastapi import FastAPI
 from config.ticketsDB import client
 import uuid
 from bson.objectid import ObjectId
@@ -147,3 +150,30 @@ async def updateEventAttendeesCount(token:str):
                     break
                 else:
                     continue
+
+async def updateActiveEventsCounts(email:str):
+    db = client["Events"]
+    collection = db[email]
+
+    event_data = await collection.find({}, {"_id:":0}).to_list(None)
+
+    for event in event_data:
+        if event["is_active"]:
+            is_expired = await is_expiry_exceeded(date = ISTdate(), time = ISTTime(), exp_date = event["expiry"])
+            if is_expired:
+                await collection.update_one(
+                    {"event_token":event["event_token"]},
+                    {"$set":{"is_active":False}}
+                )
+    
+                db3 = client["Clients"]
+                collection3 = db3[email]
+                await collection3.update_one(
+                    {"email":email},
+                    {"$inc":{"total_active_events":-1}}
+                )
+            else:
+                pass
+        else:
+            pass
+

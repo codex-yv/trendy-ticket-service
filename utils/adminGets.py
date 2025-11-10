@@ -1,7 +1,8 @@
 import collections
 from config.ticketsDB import client
 from bson.objectid import ObjectId
-
+from utils.general import is_expiry_exceeded
+from utils.IST import ISTdate, ISTTime
 async def checkAdmin(email:str):
     db = client["Clients"]
     collection = await db.list_collection_names()
@@ -128,17 +129,53 @@ async def checkRedirectTTS(key:str, token:str):
 async def verifyAdminforScan(token:str, key:str):
     db = client["Redirects"]
     collection = db["secrets"]
-
+    db2 = client["Events"]
     data = await collection.find({}, {"_id": 0}).to_list(None)
     if data:
         if key in data[0]["keys"]:
             for tokenn in data[0]["tokens"]:
                 if tokenn[0] == token:
-                    print("Verified")
-                    return True
+                    is_expired = await checkTokenExpiry(token=token)
+                    
+                    if is_expired:
+                        return -1
+                    else:
+                        return True
             return -1
         else:
             return 0
     else:
         return 0
-    
+
+
+async def checkTokenExpiry(token:str):
+    db = client["Redirects"]
+    collection = db["secrets"]
+
+    data = await collection.find({}, {"_id": 0}).to_list(None)
+    for tokenn in data[0]["tokens"]:
+        if tokenn[0] == token:
+            db2 = client["Events"]
+            collection2 = db2[tokenn[1]]
+            event_data = await collection2.find_one({"event_token":token})
+            expiry = event_data["expiry"]
+            is_active = event_data["is_active"]
+            if is_active:
+                is_expired = await is_expiry_exceeded(date=ISTdate(), time=ISTTime(), exp_date=expiry)
+                if is_expired:
+                    await collection2.update_one(
+                        {"event_token":token},
+                        {"$set":{"is_active":False}}
+                    )
+                    db3 = client["Clients"]
+                    collection3 = db3[tokenn[1]]
+                    await collection3.update_one(
+                        {"email":tokenn[1]},
+                        {"$inc":{"total_active_events":-1}}
+                    )
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        
