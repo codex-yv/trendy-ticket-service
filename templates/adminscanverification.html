@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service - Access Portal</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2C3E50',
+                        secondary: '#F5F5DC',
+                        error: '#E74C3C',
+                        success: '#27AE60'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            background: linear-gradient(135deg, #F5F5DC 0%, #F8F6F0 100%);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .title-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .card-shadow {
+            box-shadow: 0 25px 50px -12px rgba(44, 62, 80, 0.15), 0 20px 25px -5px rgba(44, 62, 80, 0.1), 0 10px 10px -5px rgba(44, 62, 80, 0.05);
+        }
+
+        .input-focus:focus {
+            outline: none;
+            border-color: #2C3E50;
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .button-hover:hover {
+            background-color: #34495E;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(44, 62, 80, 0.2);
+        }
+
+        .icon-container {
+            background: linear-gradient(135deg, #F8F6F0 0%, #F0EDE6 100%);
+        }
+        
+        .message-box {
+            transition: all 0.3s ease;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        
+        .message-box.show {
+            max-height: 100px;
+            opacity: 1;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2C3E50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Playfair Display';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKdFvUDQ.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Playfair Display';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKebukDQ.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Playfair Display';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/playfairdisplay/v40/nuFvD-vYSZviVYUb_rj3ij__anPXJzDwcbmjWBN2PKeiukDQ.ttf) format('truetype');
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center px-4 py-8">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-primary font-medium">Verifying credentials...</p>
+        </div>
+    </div>
+    
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="title-font text-4xl font-bold text-primary mb-2">Trendy Ticket Service</h1>
+            <p class="text-primary/70 text-lg">Secure Access Portal</p>
+        </div>
+        <div
+            class="bg-gradient-to-br from-white/90 via-white/85 to-white/75 backdrop-blur-sm card-shadow rounded-2xl p-8 border border-white/60">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full icon-container flex items-center justify-center">
+                    <i class="ri-shield-keyhole-line text-2xl text-primary"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-primary mb-2">Authentication Required</h2>
+                <p class="text-primary/60 text-sm">Please enter your credentials to access the system</p>
+            </div>
+            
+            <!-- Response Message Box -->
+            <div class="message-box mb-4" id="messageBox">
+                <div class="p-3 rounded-lg flex items-center" id="messageContent">
+                    <i class="ri-information-line mr-2"></i>
+                    <span id="messageText"></span>
+                </div>
+            </div>
+            
+            <form class="space-y-6" id="authForm" action="/admin/verify/scan" method="POST">
+                <div>
+                    <label class="block text-sm font-medium text-primary mb-2" for="adminKey">
+                        Admin Key
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="w-5 h-5 flex items-center justify-center">
+                                <i class="ri-key-2-line text-primary/60"></i>
+                            </div>
+                        </div>
+                        <input
+                            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus transition-all duration-200 bg-white/50 text-primary placeholder-primary/40"
+                            id="key" name="key" placeholder="Enter your admin key" required=""
+                            type="password" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-primary mb-2" for="eventToken">
+                        Event Token
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div class="w-5 h-5 flex items-center justify-center">
+                                <i class="ri-ticket-2-line text-primary/60"></i>
+                            </div>
+                        </div>
+                        <input
+                            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg input-focus transition-all duration-200 bg-white/50 text-primary placeholder-primary/40"
+                            id="token" name="token" placeholder="Enter event token" required="" type="text" />
+                    </div>
+                </div>
+                <button
+                    class="w-full bg-primary text-white py-3 px-6 rounded-button font-medium button-hover transition-all duration-200 flex items-center justify-center gap-2 !rounded-button whitespace-nowrap"
+                    type="submit" id="verifyButton">
+                    <div class="w-5 h-5 flex items-center justify-center">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    Verify Access
+                </button>
+            </form>
+            <div class="mt-6 pt-6 border-t border-gray-100">
+                <div class="flex items-center justify-center gap-2 text-sm text-primary/60">
+                    <div class="w-4 h-4 flex items-center justify-center">
+                        <i class="ri-information-line"></i>
+                    </div>
+                    <span>Secure connection established</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-6">
+            <p class="text-primary/50 text-sm">
+                Need assistance? Contact your system administrator
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('authForm');
+            const adminKeyInput = document.getElementById('key');
+            const eventTokenInput = document.getElementById('token');
+            const verifyButton = document.getElementById('verifyButton');
+            const messageBox = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            const messageContent = document.getElementById('messageContent');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // Function to show message
+            function showMessage(message, type) {
+                messageText.textContent = message;
+                
+                // Set styles based on message type
+                if (type === 'error') {
+                    messageContent.className = 'p-3 rounded-lg flex items-center bg-error/10 text-error border border-error/20';
+                    messageContent.innerHTML = `<i class="ri-error-warning-line mr-2"></i><span id="messageText">${message}</span>`;
+                } else if (type === 'success') {
+                    messageContent.className = 'p-3 rounded-lg flex items-center bg-success/10 text-success border border-success/20';
+                    messageContent.innerHTML = `<i class="ri-checkbox-circle-line mr-2"></i><span id="messageText">${message}</span>`;
+                } else {
+                    messageContent.className = 'p-3 rounded-lg flex items-center bg-primary/10 text-primary border border-primary/20';
+                    messageContent.innerHTML = `<i class="ri-information-line mr-2"></i><span id="messageText">${message}</span>`;
+                }
+                
+                messageBox.classList.add('show');
+            }
+            
+            // Function to hide message
+            function hideMessage() {
+                messageBox.classList.remove('show');
+            }
+            
+            // Function to show loading
+            function showLoading() {
+                loadingOverlay.classList.add('active');
+            }
+            
+            // Function to hide loading
+            function hideLoading() {
+                loadingOverlay.classList.remove('active');
+            }
+            
+            // Handle form submission with AJAX to check for errors
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                
+                const adminKey = adminKeyInput.value.trim();
+                const eventToken = eventTokenInput.value.trim();
+                
+                if (!adminKey || !eventToken) {
+                    showMessage('Please fill in all required fields', 'error');
+                    return;
+                }
+                
+                // Hide any previous messages
+                hideMessage();
+                
+                // Update button to show loading state
+                verifyButton.innerHTML = `
+                    <div class="w-5 h-5 flex items-center justify-center">
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    </div>
+                    Verifying...
+                `;
+                verifyButton.disabled = true;
+                
+                // Show loading overlay
+                showLoading();
+                
+                try {
+                    // Send POST request to the verification endpoint
+                    const response = await fetch('/admin/verify/scan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            key: adminKey,
+                            token: eventToken
+                        })
+                    });
+                    
+                    // Check if response is a redirect (status 303)
+                    if (response.redirected) {
+                        // Let the browser handle the redirect
+                        window.location.href = response.url;
+                        return;
+                    }
+                    
+                    const result = await response.text();
+                    
+                    if (result === '0') {
+                        showMessage('Invalid admin key. Please check your credentials and try again.', 'error');
+                    } else if (result === '1') {
+                        showMessage('Invalid event token. Please verify the token and try again.', 'error');
+                    } else {
+                        // If we get here, it means the response wasn't a redirect but also wasn't 0 or 1
+                        // This shouldn't happen normally, but let's handle it
+                        console.log('Unexpected response:', result);
+                        showMessage('Authentication successful! Redirecting...', 'success');
+                        // Submit the form normally to let the server handle the redirect
+                        form.submit();
+                    }
+                } catch (error) {
+                    console.error('Error during verification:', error);
+                    showMessage('Network error. Please check your connection and try again.', 'error');
+                } finally {
+                    // Reset button state
+                    verifyButton.innerHTML = `
+                        <div class="w-5 h-5 flex items-center justify-center">
+                            <i class="ri-shield-check-line"></i>
+                        </div>
+                        Verify Access
+                    `;
+                    verifyButton.disabled = false;
+                    
+                    // Hide loading overlay
+                    hideLoading();
+                }
+            });
+            
+            // Input focus/blur interactions
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function () {
+                    this.parentElement.classList.add('ring-2', 'ring-primary/20');
+                    // Hide message when user starts typing
+                    hideMessage();
+                });
+                input.addEventListener('blur', function () {
+                    this.parentElement.classList.remove('ring-2', 'ring-primary/20');
+                });
+            });
+        });
+    </script>
+    
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'yp9DM_64IgipyQ_Uy5am_Q';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

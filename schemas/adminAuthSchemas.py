@@ -13,3 +13,7 @@ class Signup(BaseModel):
 
 class OTP(BaseModel):
     email:str
+
+class TicketScan(BaseModel):
+    key: str
+    token:str

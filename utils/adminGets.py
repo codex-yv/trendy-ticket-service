@@ -123,3 +123,22 @@ async def checkRedirectTTS(key:str, token:str):
             return False
     else:
         return False
+
+
+async def verifyAdminforScan(token:str, key:str):
+    db = client["Redirects"]
+    collection = db["secrets"]
+
+    data = await collection.find({}, {"_id": 0}).to_list(None)
+    if data:
+        if key in data[0]["keys"]:
+            for tokenn in data[0]["tokens"]:
+                if tokenn[0] == token:
+                    print("Verified")
+                    return True
+            return -1
+        else:
+            return 0
+    else:
+        return 0
+    

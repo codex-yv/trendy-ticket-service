@@ -15,7 +15,7 @@ from schemas.ticketSchema import Ticket
 from schemas.paymentSchemas import Payment
 from schemas.emailSchemas import Email, OTPe
 from schemas.RedirectSchemas import RedirectTTS
-from schemas.adminAuthSchemas import Login, Signup, OTP
+from schemas.adminAuthSchemas import Login, Signup, OTP, TicketScan
 from schemas.adminDashboardSchemas import Useless, Hosting
 
 from security.encrypyAmt import encryptt
@@ -24,7 +24,7 @@ from config.payment_config import key_id, key_seceret
 from utils.tickPost import insert_ticket
 from utils.trickGet import verify_ticket_admin, just_check_ticket, get_ticket_info
 
-from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees, checkRedirectTTS
+from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardData, getAdminSecurityData, getAdminEvents, getEventAttendees, checkRedirectTTS, verifyAdminforScan
 from utils.adminPosts import createNewAdmin, hostEvent
 from utils.adminPuts import updateAdminKey, deteleEvent
 
@@ -122,10 +122,21 @@ async def payment_success(request:Request):
     else:
         return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
-@app.get("/admin/verify")
+@app.get("/admin/verify") # add cokkie access
 async def ticket_verification_page(request:Request):
-    return templates.TemplateResponse("verification.html", {"request":request})
+    print("I am here!")
+    admin = request.cookies.get("session_admin_scan_key")
+    token = request.cookies.get("session_admin_scan_token")
+    if admin and token:
+        print("VALID TOKEN")
+        return templates.TemplateResponse("verification.html", {"request":request})
+    else:
+        print("INVALID TOKEN")
+        return RedirectResponse(url="/admin/scan", status_code=HTTP_303_SEE_OTHER)
 
+@app.get("/admin/scan") 
+async def admin_scan(request:Request):
+    return templates.TemplateResponse("adminscanverification.html", {"request":request})
 
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: RedirectTTS):
@@ -225,7 +236,7 @@ async def verify_signature(request: Request):
             "payment_time":time,
             "attending_time":""
         }
-        is_inserted = await insert_ticket(Data=inserting_data, collection_name=token)
+        is_inserted = await insert_ticket(Data=inserting_data, collection_name=token, ticket_id=order_id)
         await share_ticket(ticket=order_id, email=email)
         
         if is_inserted:
@@ -240,11 +251,27 @@ async def verify_signature(request: Request):
 
 @app.post("/verify-ticket") # ticket validation via QR scannig
 async def verify_ticket(request:Request, ticket:Ticket):
-
-    is_valid = await verify_ticket_admin(ticket=ticket.ticket_id) 
+    token = request.cookies.get("session_admin_scan_token")
+    is_valid = await verify_ticket_admin(ticket=ticket.ticket_id, token=token) 
     
     return JSONResponse(content={"valid": is_valid})
+   
 
+@app.post("/admin/verify/scan")
+async def admin_verify_scan(request:Request, admin:TicketScan, response:Response):
+    
+    val = await verifyAdminforScan(token=admin.token, key=admin.key) 
+    if val == -1:
+        return 1
+    elif val == 0:
+        return 0
+    else:
+        response = RedirectResponse(url = '/admin/verify',  status_code=HTTP_303_SEE_OTHER)
+        response.set_cookie(key = "session_admin_scan_key", value=admin.key, httponly=True, max_age=60*60*24*7)
+        response.set_cookie(key = "session_admin_scan_token", value=admin.token, httponly=True, max_age=60*60*24*7)
+        return response
+    
+    
 
 @app.get("/generate/ticket/event") # a simple form to submit the ticket tID
 async def generate_ticket_event(request:Request):
@@ -268,7 +295,7 @@ async def generate_ticket(request:Request, ticket_id:Ticket):
 
 @app.get("/")
 async def get_admin_page(request:Request):
-    admin = request.session.get("session_user")
+    admin = request.cookies.get("session_user_admin")
 
     if admin:
         return RedirectResponse(url = '/admin/dashboard')
@@ -277,14 +304,14 @@ async def get_admin_page(request:Request):
 
 @app.get( "/admin/login")
 async def admin_login(request:Request):
-    admin = request.session.get("session_user")
+    admin = request.cookies.get("session_user_admin")
     if admin:
         return RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)
     return templates_admin.TemplateResponse("login.html", {"request":request})
 
 @app.get("/admin/signup")
 async def admin_signup(request:Request):
-    admin = request.session.get("session_user")
+    admin = request.cookies.get("session_user_admin")
     if admin:
         return RedirectResponse(url = '/admin/dashboard',  status_code=HTTP_303_SEE_OTHER)  
     return templates_admin.TemplateResponse("signup.html", {"request":request})
