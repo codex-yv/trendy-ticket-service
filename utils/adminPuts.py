@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from config.ticketsDB import client
 import uuid
 from bson.objectid import ObjectId
+from config.objectsConfig import FixedObjectID
 
 async def updateAdminKey(email:str):
     db = client["Clients"]
@@ -71,7 +72,7 @@ async def deteleEvent(email:str, event_id:str):
         
     
     await collection3.update_one(
-        {"_id":ObjectId("690f8c2a5d7cf53e815adf0d")},
+        {"_id":ObjectId(FixedObjectID.redirect)},
         {"$set": {"tokens": new_token}}
     )
 
@@ -87,7 +88,7 @@ async def deteleEvent(email:str, event_id:str):
         del id_mapping[event_token]
     
     await collection4.update_one(
-        {"_id":ObjectId("6910e37a2b3d2191a187a5d6")},
+        {"_id":ObjectId(FixedObjectID.ticVer)},
         {"$set": {"mapping": mapping, "id_mapping": id_mapping}}
     )
     
@@ -99,9 +100,23 @@ async def updateRedirect(token:str, email:str):
     new_tokens = [token, email]
     tokens.append(new_tokens)
     await collection.update_one(
-        {"_id":ObjectId("690f8c2a5d7cf53e815adf0d")},
+        {"_id":ObjectId(FixedObjectID.redirect)},
         {"$set": {"tokens": tokens}}
     )
+
+async def updateRedirectKeys(key:str):
+    db = client["Redirects"]
+    collection = db["secrets"]
+    keys = (await collection.find({}, {"_id": 0}).to_list(None))[0]["keys"]
+
+    keys.append(key)
+    await collection.update_one(
+        {"_id":ObjectId(FixedObjectID.redirect)},
+        {"$set": {"keys": keys}}
+    )
+
+    
+    
 
 async def updateTicketGeneratedCount(token:str):
     db = client["Redirects"] # from redirects we are trying to get email on which the given token(event token) is registered

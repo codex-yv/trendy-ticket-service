@@ -62,7 +62,7 @@
                     <h1 class="text-white text-xl font-bold mb-2">Trendy Ticket Service</h1>
                     <div class="bg-white/20 backdrop-blur-sm rounded-lg p-2 mb-2">
                         <div class="text-white text-base font-bold">EVENT TICKET</div>
-                        <div class="text-white/90 text-xs">YOUR ENTRY PASS</div>
+                        <div class="text-white/90 text-xs"> {{event_name}}, {{event_loc}} </div>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                         </div>
                         <div class="text-xs text-gray-600 leading-relaxed">
                             <strong>Information:</strong> Show this ticket at Event for entry. You can take screenshot
-                            of this.
+                            of this. Event will be held on {{event_date}}
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
             </div>
             <div class="bg-gray-50 px-4 py-2 border-t border-dashed border-gray-200">
                 <div class="flex justify-between items-center text-xs text-gray-500">
-                    <span>Valid until: Dec 31, 2024</span>
+                    <span>Valid until: {{expiry}} </span>
                     <span>Mobile Ticket</span>
                 </div>
             </div>

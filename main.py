@@ -30,7 +30,7 @@ from utils.adminGets import checkAdmin, checkAdminPassword, getAdminDashboardDat
 from utils.adminPosts import createNewAdmin, hostEvent
 from utils.adminPuts import updateAdminKey, deteleEvent, updateActiveEventsCounts
 
-from utils.general import get_amount, share_ticket, generate_event_token
+from utils.general import get_amount, share_ticket, generate_event_token, send_otp
 from utils.IST import ISTdate, ISTTime
 from utils.redirectCURD import update_json, get_value
 
@@ -120,7 +120,12 @@ async def payment_success(request:Request):
         name = ticket_details["name"]
         phone = ticket_details["phone"]
         valid = ticket_details["valid"]
-        return templates.TemplateResponse("tickets.html", {"request":request, "ticket_id":ticket_id, "valid":valid, "name":name, "email":email, "phone":phone})
+        expiry = ticket_details["expiry"]
+        event_name = ticket_details["event_name"]
+        event_loc = ticket_details["eve_location"]
+        event_date = ticket_details["event_start"]
+        return templates.TemplateResponse("tickets.html", {"request":request, "ticket_id":ticket_id, "valid":valid, "name":name, "email":email, "phone":phone, "expiry": expiry, "event_loc":event_loc.title(), "event_date":event_date, "event_name":event_name.title()})
+
     else:
         return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
@@ -172,15 +177,16 @@ async def tts_payment(request: Request, response: Response, data: RedirectTTS):
         return JSONResponse(content={"success": False, "message": "Invalid key or token"}, status_code=400)
 
 @app.post("/send-otp")
-async def send_otp(request:Request, email:Email = Body(...)):
-    request.session["otp"] = "12345"
+async def send_OTP(request:Request, email:Email = Body(...)):
+    sended_otp = await send_otp(email=email.email)
+    request.session["otp"] = sended_otp
     return JSONResponse(content={"success": True, "message": f"OTP sent to {email.email}"})
 
 @app.post("/verify-otp")
 async def verify_otp(request:Request, otp:OTPe = Body(...)):
     stored_otp = request.session.get("otp")
     
-    if stored_otp == otp.otp:
+    if str(stored_otp) == str(otp.otp):
         return JSONResponse(content={"success": True, "message": "OTP verified successfully"})
     else:
         return JSONResponse(content={"success": False, "message": "Invalid OTP"}, status_code=400)
@@ -340,13 +346,14 @@ async def admin_dashboard(request:Request):
 
 @app.post("/admin/send-otp")
 async def admin_send_otp(request:Request, email:OTP):
-    print(email.email)
-    # time.sleep(5)
+    sended_otp = await send_otp(email=email.email)
+    request.session["admin_otp"] = sended_otp
     return True
 
 @app.post("/admin/signup")
 async def admin_signup(request:Request, data:Signup):
-    if data.otp != "12345": # real otp will be done here instead of constant
+    sended_otp = request.session.get("admin_otp")
+    if str(data.otp) != str(sended_otp): # real otp will be done here instead of constant
         return 0
     else:
         admin_exist = await checkAdmin(email=data.email)

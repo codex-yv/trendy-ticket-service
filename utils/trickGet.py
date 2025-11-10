@@ -3,6 +3,7 @@ from utils.IST import ISTdate, ISTTime
 from bson.objectid import ObjectId
 from utils.adminPuts import updateEventAttendeesCount
 from utils.adminGets import checkTokenExpiry
+
 # async def verify_ticket_admin(ticket:str, token:str):
 #     db = client["Tickets"]
 #     db2 = client["TicVer"]
@@ -36,7 +37,7 @@ async def verify_ticket_admin(ticket:str, token:str):
     db = client["Tickets"]
     collection = db[token]
     ticket_data = await collection.find_one({"ticket_id": ticket})
-    is_expired = checkTokenExpiry(token=token)
+    is_expired = await checkTokenExpiry(token=token)
     if not is_expired:
         if ticket_data:
             if not ticket_data["attended"] :

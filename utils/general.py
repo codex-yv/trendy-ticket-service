@@ -100,3 +100,58 @@ async def share_ticket(ticket: str, email:str):
         sg.send(message)
     except Exception as e:
         print(f"Error sending email: {e}")
+
+
+
+async def generate_otp():
+    otp = random.randint(100000, 999999)
+    return otp
+
+async def send_otp(email: str):
+    otp = await generate_otp()
+
+    message = Mail(
+        from_email=sender_email,  # must be verified in SendGrid
+        to_emails=email,
+        subject="Your OTP Code",
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="font-family: Arial, sans-serif; background-color:#f9f9f9; padding:20px;">
+            <div style="max-width:500px; margin:auto; background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+                <h2 style="color:#333; text-align:center;">✨ Trendy Ticket Service</h2>
+                <p style="color:#444; font-size:15px;">Hi there,</p>
+                <p style="color:#444; font-size:15px;">
+                    Your one-time password (OTP) to <b>sign up at Trendy Ticket Service (admin)</b> is:
+                </p>
+                <div style="text-align:center; margin:20px 0;">
+                    <span style="display:inline-block; font-size:24px; font-weight:bold; letter-spacing:4px; color:#e91e63; padding:10px 20px; border:2px dashed #e91e63; border-radius:6px;">
+                        {otp}
+                    </span>
+                </div>
+                <p style="color:#444; font-size:15px;">
+                    ⏳ This code is valid for <b>5 minutes</b>. Please do not share it with anyone for your account’s safety.
+                </p>
+                <p style="color:#444; font-size:15px; margin-top:30px;">
+                    Thanks,<br>
+                    <b>Trendy Team</b>
+                </p>
+                <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
+                <p style="font-size:12px; color:#888; text-align:center;">
+                    If you didn’t request this code, you can safely ignore this email.
+                </p>
+            </div>
+        </body>
+        </html>
+        """
+
+
+            )
+
+    try:
+        sg = SendGridAPIClient(sender_key)
+        sg.send(message)
+        return otp
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return None

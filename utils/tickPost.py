@@ -1,6 +1,7 @@
 from config.ticketsDB import client
 from utils.adminPuts import updateTicketGeneratedCount
 from bson.objectid import ObjectId
+from config.objectsConfig import FixedObjectID
 
 async def insert_ticket(Data:dict, collection_name:str, ticket_id:str): # /see project schemas in adminProjectSchemas.py
     db = client['Tickets']
@@ -15,7 +16,7 @@ async def insert_ticket(Data:dict, collection_name:str, ticket_id:str): # /see p
     insert_data = {
         collection_name: ticket_db_id
     }
-    await collection2.update_one({"_id": ObjectId("6910e37a2b3d2191a187a5d6")}, {"$set":{"mapping": insert_data}})
+    await collection2.update_one({"_id": ObjectId(FixedObjectID.ticVer)}, {"$set":{"mapping": insert_data}})
 
     value = await collection2.find({}, {"_id": 0}).to_list(None)
     id_mapping = value[0]["id_mapping"]
@@ -26,7 +27,7 @@ async def insert_ticket(Data:dict, collection_name:str, ticket_id:str): # /see p
     except:
         id_mapping[collection_name] = [ticket_id]
 
-    await collection2.update_one({"_id": ObjectId("6910e37a2b3d2191a187a5d6")}, {"$set":{"id_mapping": id_mapping}})
+    await collection2.update_one({"_id": ObjectId(FixedObjectID.ticVer)}, {"$set":{"id_mapping": id_mapping}})
 
     await updateTicketGeneratedCount(collection_name)
     return True

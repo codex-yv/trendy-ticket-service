@@ -2,18 +2,18 @@ from config.ticketsDB import client
 import uuid
 from utils.IST import ISTdate, ISTTime
 from utils.adminPuts import updateEventsStatus
-from utils.adminPuts import updateRedirect
+from utils.adminPuts import updateRedirect, updateRedirectKeys
 
 async def createNewAdmin(admin_data:object):
     db = client["Clients"]
     collection = db[admin_data.email]
-
+    key_id = str(uuid.uuid4())
     await collection.insert_one({
         "fullname": admin_data.fullname,
         "email": admin_data.email,
         "phone": admin_data.phone,
         "password": admin_data.password,
-        "key_id": str(uuid.uuid4()),
+        "key_id": key_id,
         "event_ids": [],
         "total_events": 0,
         "total_active_events": 0,
@@ -22,6 +22,8 @@ async def createNewAdmin(admin_data:object):
         "logged_out": f"{ISTdate()} {ISTTime()}",
         "is_active": False,
     })
+
+    await updateRedirectKeys(key = key_id)
 
 async def hostEvent(hosting:object, email:str):
     db = client["Events"]
