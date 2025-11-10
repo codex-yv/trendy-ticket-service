@@ -113,7 +113,7 @@ async def checkRedirectTTS(key:str, token:str):
     collection = db["secrets"]
 
     data = await collection.find({}, {"_id": 0}).to_list(None)
-    print(data)
+    # print(data)
     if data:
         if key in data[0]["keys"]:
             for tokenn in data[0]["tokens"]:

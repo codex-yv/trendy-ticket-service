@@ -131,14 +131,14 @@ async def payment_success(request:Request):
 
 @app.get("/admin/verify") # add cokkie access
 async def ticket_verification_page(request:Request):
-    print("I am here!")
+    # print("I am here!")
     admin = request.cookies.get("session_admin_scan_key")
     token = request.cookies.get("session_admin_scan_token")
     if admin and token:
-        print("VALID TOKEN")
+        # print("VALID TOKEN")
         return templates.TemplateResponse("verification.html", {"request":request})
     else:
-        print("INVALID TOKEN")
+        # print("INVALID TOKEN")
         return RedirectResponse(url="/admin/scan", status_code=HTTP_303_SEE_OTHER)
 
 @app.get("/admin/scan") 
@@ -148,7 +148,7 @@ async def admin_scan(request:Request):
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: RedirectTTS):
     is_redirect = await checkRedirectTTS(key=data.key, token=data.token)
-    print(is_redirect)
+    # print(is_redirect)
     if is_redirect:
         is_expired = await checkTokenExpiry(token=data.token)
         if not is_expired:
@@ -331,7 +331,7 @@ async def admin_signup(request:Request):
 @app.get("/admin/dashboard")
 async def admin_dashboard(request:Request):
     admin = request.cookies.get("session_user_admin")
-    print(admin)
+    # print(admin)
     if admin:
         await updateActiveEventsCounts(email=admin)
         admin_dashboard_data = await getAdminDashboardData(email=admin)
@@ -395,7 +395,7 @@ async def admin_events(request:Request, data:Useless):
     if admin:
         await updateActiveEventsCounts(email=admin)
         eventss = await getAdminEvents(email=admin)
-        print(eventss)
+        # print(eventss)
         return eventss
     else:
         return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)

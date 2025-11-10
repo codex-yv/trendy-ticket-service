@@ -39,6 +39,6 @@ async def delete_key(file_path, key):
     if key in data:
         del data[key]
         await save_json(file_path, data)
-        print(f"🗑️ Deleted key '{key}'.")
+        # print(f"🗑️ Deleted key '{key}'.")
     else:
-        print(f"⚠️ Key '{key}' not found.")
+        print(f"Key '{key}' not found.")
