@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://static.readdy.ai/static/e.js"></script>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Trendy Ticket Service</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#8B4513', secondary: '#D2B48C' }, borderRadius: { 'none': '0px', 'sm': '4px', DEFAULT: '8px', 'md': '12px', 'lg': '16px', 'xl': '20px', '2xl': '24px', '3xl': '32px', 'full': '9999px', 'button': '8px' } } } }</script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="../static/style.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet" />
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-pacifico {
+            font-family: 'Pacifico', serif;
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 800;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuDyYMZg.ttf) format('truetype');
+        }
+        @font-face {
+            font-family: 'Pacifico';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://fonts.gstatic.com/s/pacifico/v23/FwZY7-Qmy14u9lezJ96A.ttf) format('truetype');
+        }
+
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
+    <div class="w-full">
+        <header class="bg-gradient-to-r from-amber-100 to-orange-100 border-b border-amber-200">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+                <div class="flex items-center justify-center">
+                    <h1 class="font-pacifico text-2xl sm:text-3xl text-primary">Trendy Ticket Service</h1>
+                </div>
+            </div>
+        </header>
+        <main class="w-full">
+            <section class="bg-gradient-to-r from-amber-100 via-orange-100 to-yellow-100 py-10 sm:py-20"
+                style="background-image: url('https://readdy.ai/api/search-image?query=elegant%20ticket%20service%20background%20with%20subtle%20geometric%20patterns%2C%20warm%20cream%20and%20golden%20tones%2C%20modern%20minimalist%20design%2C%20soft%20lighting%2C%20professional%20atmosphere%2C%20clean%20white%20space%20on%20left%20side%20for%20text%20content%2C%20sophisticated%20business%20environment&amp;width=1920&amp;height=800&amp;seq=hero001&amp;orientation=landscape'); background-size: cover; background-position: center;">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                    <div class="w-full flex items-center justify-center min-h-[600px]">
+                        <div
+                            class="w-full max-w-2xl bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-12 shadow-2xl border border-amber-200">
+                            <div class="mb-8 sm:mb-12">
+                                <h2 class="text-3xl sm:text-5xl font-black text-primary mb-4 sm:mb-6 leading-tight">
+                                    Generate Your Premium Ticket</h2>
+                                <p class="text-lg sm:text-xl text-primary/80 font-medium">Create personalized tickets
+                                    instantly with our advanced generation system</p>
+                            </div>
+                            <form class="space-y-6 sm:space-y-8">
+                                <div>
+                                    <label class="block text-base sm:text-lg font-bold text-primary mb-2 sm:mb-3">Full
+                                        Name</label>
+                                    <input
+                                        class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm sm:text-base font-medium text-primary placeholder-primary/50 focus:outline-none focus:border-primary focus:bg-white transition-all"
+                                        id="fullName" placeholder="Enter your full name" type="text" />
+                                </div>
+                                <div>
+                                    <label class="block text-base sm:text-lg font-bold text-primary mb-2 sm:mb-3">Email
+                                        Address</label>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                        <input
+                                            class="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm sm:text-base font-medium text-primary placeholder-primary/50 focus:outline-none focus:border-primary focus:bg-white transition-all"
+                                            id="email" placeholder="Enter your email" type="email" />
+                                        <button
+                                            class="px-4 sm:px-6 py-2 sm:py-3 bg-secondary text-primary font-bold text-sm sm:text-base rounded-button border border-secondary hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap"
+                                            id="sendOtpBtn" type="button">
+                                            <div
+                                                class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                                <i class="ri-mail-send-line"></i>
+                                            </div>
+                                            Send OTP
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="hidden" id="otpSection">
+                                    <label class="block text-base sm:text-lg font-bold text-primary mb-2 sm:mb-3">Enter
+                                        OTP</label>
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                                        <input
+                                            class="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm sm:text-base font-medium text-primary placeholder-primary/50 focus:outline-none focus:border-primary focus:bg-white transition-all"
+                                            id="otpInput" placeholder="Enter 6-digit OTP" type="text" />
+                                        <button
+                                            class="px-4 sm:px-6 py-2 sm:py-3 bg-secondary text-primary font-bold text-sm sm:text-base rounded-button border border-secondary hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap"
+                                            id="verifyOtpBtn" type="button">
+                                            <div
+                                                class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                                <i class="ri-shield-check-line"></i>
+                                            </div>
+                                            Verify
+                                        </button>
+                                    </div>
+                                    <div id="otpMessage" class="mt-2 text-sm font-medium hidden"></div>
+                                </div>
+                                <div>
+                                    <label class="block text-base sm:text-lg font-bold text-primary mb-2 sm:mb-3">Phone
+                                        Number</label>
+                                    <input
+                                        class="w-full px-3 sm:px-4 py-2 sm:py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm sm:text-base font-medium text-primary placeholder-primary/50 focus:outline-none focus:border-primary focus:bg-white transition-all"
+                                        id="phone" placeholder="Enter your phone number" type="tel" />
+                                </div>
+                                <button
+                                    class="w-full py-4 sm:py-6 bg-primary text-white font-black text-lg sm:text-xl rounded-button hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                    id="generateTicketBtn" type="button" disabled>
+                                    <div
+                                        class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 sm:mr-3 inline-flex">
+                                        <i class="ri-ticket-2-line"></i>
+                                    </div>
+                                    Generate Ticket
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-12 sm:py-20 bg-gradient-to-b from-orange-50 to-amber-50">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                    <div class="text-center mb-12 sm:mb-16">
+                        <h3 class="text-3xl sm:text-4xl font-black text-primary mb-4 sm:mb-6">How It Works</h3>
+                        <p class="text-lg sm:text-xl text-primary/80 font-medium max-w-3xl mx-auto">Our streamlined
+                            process makes ticket generation quick, secure, and hassle-free</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12">
+                        <div class="text-center">
+                            <div
+                                class="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                                <div class="w-10 h-10 flex items-center justify-center">
+                                    <i class="ri-user-add-line text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-primary mb-4">1. Fill Your Details</h4>
+                            <p class="text-lg text-primary/70 font-medium leading-relaxed">Enter your full name, email
+                                address, and phone number in our secure form. All information is encrypted and
+                                protected.</p>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                                <div class="w-10 h-10 flex items-center justify-center">
+                                    <i class="ri-shield-check-line text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-primary mb-4">2. Verify Email</h4>
+                            <p class="text-lg text-primary/70 font-medium leading-relaxed">Click "Send OTP" to receive a
+                                verification code in your email. Enter the 6-digit code to confirm your identity.</p>
+                        </div>
+                        <div class="text-center">
+                            <div
+                                class="w-20 h-20 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg">
+                                <div class="w-10 h-10 flex items-center justify-center">
+                                    <i class="ri-ticket-2-line text-white text-2xl"></i>
+                                </div>
+                            </div>
+                            <h4 class="text-2xl font-bold text-primary mb-4">3. Generate Ticket</h4>
+                            <p class="text-lg text-primary/70 font-medium leading-relaxed">Click "Generate Ticket" to
+                                create your personalized ticket instantly. Download or share your ticket immediately.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-12 sm:mt-16 bg-white rounded-3xl p-6 sm:p-12 shadow-xl border border-amber-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+                            <div>
+                                <h4 class="text-3xl font-bold text-primary mb-6">Why Choose Our Service?</h4>
+                                <ul class="space-y-4">
+                                    <li class="flex items-start">
+                                        <div class="w-6 h-6 flex items-center justify-center mr-4 mt-1">
+                                            <i class="ri-check-line text-primary text-xl"></i>
+                                        </div>
+                                        <span class="text-lg text-primary/80 font-medium">Instant ticket generation in
+                                            seconds</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="w-6 h-6 flex items-center justify-center mr-4 mt-1">
+                                            <i class="ri-check-line text-primary text-xl"></i>
+                                        </div>
+                                        <span class="text-lg text-primary/80 font-medium">Secure email verification
+                                            system</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="w-6 h-6 flex items-center justify-center mr-4 mt-1">
+                                            <i class="ri-check-line text-primary text-xl"></i>
+                                        </div>
+                                        <span class="text-lg text-primary/80 font-medium">Professional ticket design
+                                            templates</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <div class="w-6 h-6 flex items-center justify-center mr-4 mt-1">
+                                            <i class="ri-check-line text-primary text-xl"></i>
+                                        </div>
+                                        <span class="text-lg text-primary/80 font-medium">24/7 customer support
+                                            available</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="text-center">
+                                <img alt="Ticket Preview" class="w-full rounded-2xl shadow-lg object-cover"
+                                    src="https://readdy.ai/api/search-image?query=modern%20digital%20ticket%20design%20mockup%2C%20elegant%20golden%20and%20cream%20colored%20ticket%20template%2C%20professional%20business%20document%2C%20clean%20typography%2C%20premium%20quality%20design%2C%20sophisticated%20layout%20with%20QR%20code%20elements&amp;width=500&amp;height=400&amp;seq=ticket001&amp;orientation=landscape" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-gradient-to-r from-primary to-primary/90 text-white py-8 sm:py-12">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+                    <div>
+                        <h5 class="font-pacifico text-2xl mb-4">Trendy Ticket Service</h5>
+                        <p class="text-white/80 font-medium">Creating premium tickets with style and security since
+                            2020.</p>
+                    </div>
+                    <div>
+                        <h6 class="text-lg font-bold mb-4">Quick Links</h6>
+                        <ul class="space-y-2">
+                            <li><a class="text-white/80 hover:text-white transition-colors font-medium" href="#">About
+                                    Us</a></li>
+                            <li><a class="text-white/80 hover:text-white transition-colors font-medium" href="#">Privacy
+                                    Policy</a></li>
+                            <li><a class="text-white/80 hover:text-white transition-colors font-medium" href="#">Terms
+                                    of Service</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h6 class="text-lg font-bold mb-4">Contact Info</h6>
+                        <p class="text-white/80 font-medium">support@trendytickets.com</p>
+                        <p class="text-white/80 font-medium">+1 (555) 123-4567</p>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 mt-8 pt-8 text-center">
+                    <p class="text-white/60 font-medium">© 2024 Trendy Ticket Service. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sendOtpBtn = document.getElementById('sendOtpBtn');
+            const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+            const otpSection = document.getElementById('otpSection');
+            const otpMessage = document.getElementById('otpMessage');
+            const generateTicketBtn = document.getElementById('generateTicketBtn');
+            let isOtpSent = false;
+            let isOtpVerified = false;
+            let isGeneratingTicket = false;
+
+            // Send OTP functionality
+            sendOtpBtn.addEventListener('click', async function () {
+                if (isOtpSent) return; // Prevent double API calls
+                
+                const email = document.getElementById('email').value;
+                if (!email) {
+                    alert('Please enter your email address first');
+                    return;
+                }
+                if (!email.includes('@')) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                // Show loading state
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.innerHTML = `
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    </div>
+                    Sending...
+                `;
+
+                try {
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/send-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: email })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        otpSection.classList.remove('hidden');
+                        sendOtpBtn.innerHTML = `
+                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                <i class="ri-check-line"></i>
+                            </div>
+                            OTP Sent
+                        `;
+                        isOtpSent = true;
+                        otpMessage.textContent = data.message;
+                        otpMessage.classList.remove('hidden', 'text-red-500');
+                        otpMessage.classList.add('text-green-500');
+                    } else {
+                        alert('Failed to send OTP. Please try again.');
+                        sendOtpBtn.disabled = false;
+                        sendOtpBtn.innerHTML = `
+                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                <i class="ri-mail-send-line"></i>
+                            </div>
+                            Send OTP
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error sending OTP:', error);
+                    alert('An error occurred while sending OTP. Please try again.');
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.innerHTML = `
+                        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                            <i class="ri-mail-send-line"></i>
+                        </div>
+                        Send OTP
+                    `;
+                }
+            });
+
+            // Verify OTP functionality
+            verifyOtpBtn.addEventListener('click', async function () {
+                const otpInput = document.getElementById('otpInput').value;
+                
+                if (!otpInput) {
+                    otpMessage.textContent = 'Please enter the OTP code';
+                    otpMessage.classList.remove('hidden', 'text-green-500');
+                    otpMessage.classList.add('text-red-500');
+                    return;
+                }
+
+                // Show loading state
+                verifyOtpBtn.disabled = true;
+                verifyOtpBtn.innerHTML = `
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    </div>
+                    Verifying...
+                `;
+
+                try {
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/verify-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ otp: otpInput })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        otpMessage.textContent = data.message;
+                        otpMessage.classList.remove('hidden', 'text-red-500');
+                        otpMessage.classList.add('text-green-500');
+                        isOtpVerified = true;
+                        generateTicketBtn.disabled = false;
+                        verifyOtpBtn.innerHTML = `
+                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                <i class="ri-check-line"></i>
+                            </div>
+                            Verified
+                        `;
+                        verifyOtpBtn.disabled = true;
+                    } else {
+                        otpMessage.textContent = data.message;
+                        otpMessage.classList.remove('hidden', 'text-green-500');
+                        otpMessage.classList.add('text-red-500');
+                        verifyOtpBtn.disabled = false;
+                        verifyOtpBtn.innerHTML = `
+                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                                <i class="ri-shield-check-line"></i>
+                            </div>
+                            Verify
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error verifying OTP:', error);
+                    otpMessage.textContent = 'An error occurred while verifying OTP. Please try again.';
+                    otpMessage.classList.remove('hidden', 'text-green-500');
+                    otpMessage.classList.add('text-red-500');
+                    verifyOtpBtn.disabled = false;
+                    verifyOtpBtn.innerHTML = `
+                        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 inline-flex">
+                            <i class="ri-shield-check-line"></i>
+                        </div>
+                        Verify
+                    `;
+                }
+            });
+
+            // Ticket generation functionality
+            generateTicketBtn.addEventListener('click', async function () {
+                if (isGeneratingTicket) return; // Prevent double API calls
+                
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                
+                if (!fullName || !email || !phone) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                if (!isOtpVerified) {
+                    alert('Please verify your OTP first');
+                    return;
+                }
+
+                // Set flag to prevent double API calls
+                isGeneratingTicket = true;
+                
+                // Show loading state
+                generateTicketBtn.disabled = true;
+                generateTicketBtn.innerHTML = `
+                    <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 sm:mr-3 inline-flex">
+                        <i class="ri-loader-4-line animate-spin"></i>
+                    </div>
+                    Generating Ticket...
+                `;
+
+                try {
+                    // Send POST request to FastAPI server
+                    const response = await fetch('/nopay', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            phone: phone,
+                            name: fullName
+                        })
+                    });
+
+                    // Check if the response is a redirect
+                    if (response.redirected) {
+                        // Follow the redirect
+                        window.location.href = response.url;
+                    } else if (response.status === 303) {
+                        // Handle 303 See Other redirect
+                        const redirectUrl = response.headers.get('Location');
+                        if (redirectUrl) {
+                            window.location.href = redirectUrl;
+                        } else {
+                            throw new Error('Redirect URL not found');
+                        }
+                    } else {
+                        // Handle other response types if needed
+                        const result = await response.json();
+                        console.log('Ticket generation result:', result);
+                        
+                        // If no redirect, show success message
+                        alert('Ticket generated successfully! Check your email for the download link.');
+                        
+                        // Reset button state
+                        generateTicketBtn.disabled = false;
+                        generateTicketBtn.innerHTML = `
+                            <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 sm:mr-3 inline-flex">
+                                <i class="ri-ticket-2-line"></i>
+                            </div>
+                            Generate Ticket
+                        `;
+                        isGeneratingTicket = false;
+                    }
+                } catch (error) {
+                    console.error('Error generating ticket:', error);
+                    alert('An error occurred while generating your ticket. Please try again.');
+                    
+                    // Reset button state on error
+                    generateTicketBtn.disabled = false;
+                    generateTicketBtn.innerHTML = `
+                        <div class="w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center mr-2 sm:mr-3 inline-flex">
+                            <i class="ri-ticket-2-line"></i>
+                        </div>
+                        Generate Ticket
+                    `;
+                    isGeneratingTicket = false;
+                }
+            });
+        });
+    </script>
+    <script>
+        !function (t, e) { var o, n, p, r; e.__SV || (window.posthog = e, e._i = [], e.init = function (i, s, a) { function g(t, e) { var o = e.split("."); 2 == o.length && (t = t[o[0]], e = o[1]), t[e] = function () { t.push([e].concat(Array.prototype.slice.call(arguments, 0))) } } (p = t.createElement("script")).type = "text/javascript", p.crossOrigin = "anonymous", p.async = !0, p.src = s.api_host.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js", (r = t.getElementsByTagName("script")[0]).parentNode.insertBefore(p, r); var u = e; for (void 0 !== a ? u = e[a] = [] : a = "posthog", u.people = u.people || [], u.toString = function (t) { var e = "posthog"; return "posthog" !== a && (e += "." + a), t || (e += " (stub)"), e }, u.people.toString = function () { return u.toString(1) + ".people (stub)" }, o = "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "), n = 0; n < o.length; n++)g(u, o[n]); e._i.push([i, s, a]) }, e.__SV = 1) }(document, window.posthog || []);
+        posthog.init('phc_t9tkQZJiyi2ps9zUYm8TDsL6qXo4YmZx0Ot5rBlAlEd', {
+            api_host: 'https://us.i.posthog.com',
+            autocapture: false,
+            capture_pageview: false,
+            capture_pageleave: false,
+            capture_performance: {
+                web_vitals: false,
+            },
+            rageclick: false,
+        })
+        window.shareKey = 'zkyNzjX7H2pQPFtCOKaeNQ';
+        window.host = 'readdy.ai';
+    </script>
+</body>
+
+</html>

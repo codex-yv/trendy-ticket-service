@@ -99,8 +99,8 @@ async def getEventAttendees(email:str, event_id:str):
     if total_generated_tickets > 0:
         collections = await db2.list_collection_names()
         if event_token in collections:
-            collection = db2[event_token]
-            attendees = await collection.find({}, {"_id": 0, "signature": 0}).to_list(None)
+            collection2 = db2[event_token]
+            attendees = await collection2.find({}, {"_id": 0, "signature": 0}).to_list(None)
             return attendees
         else:
             return []

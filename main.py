@@ -14,7 +14,7 @@ from urllib.parse import quote
 import razorpay
 
 from schemas.ticketSchema import Ticket
-from schemas.paymentSchemas import Payment
+from schemas.paymentSchemas import Payment, NoPay
 from schemas.emailSchemas import Email, OTPe
 from schemas.RedirectSchemas import RedirectTTS
 from schemas.adminAuthSchemas import Login, Signup, OTP, TicketScan
@@ -80,19 +80,28 @@ async def welcome_head():
 @app.get("/{info}")
 async def dashboard(request: Request, info: str = None):
     is_key = await get_value(file_path="database/redirectTTS.json", key=info)
-    if is_key:
+    if is_key: # it will check if there is any key with given info (id) basically helps to prevent direct access to payment page and get secret details.
         amount = is_key["amount"]
         token = is_key["token"]
-        if amount and token:
-            request.session["session_amount"] = amount
-            request.session["token"] = token
+        payment = is_key["payment"]
+        request.session["session_amount"] = amount
+        request.session["token"] = token
+        if payment:
+            if amount and token:
+                
+                return templates.TemplateResponse(
+                    "payments.html",
+                    {"request": request, "amount": str(amount),  "key_id":RAZORPAY_KEY_ID}
+                )
+        else:
             return templates.TemplateResponse(
-                "payments.html",
-                {"request": request, "amount": str(amount),  "key_id":RAZORPAY_KEY_ID}
+                "noPayment.html",
+                {"request": request, "amount": str(amount)}
             )
     else:
         return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
-    
+
+
 @app.get('/success/payment')
 def payment_success(request:Request):
     amount = request.session.get("session_amount")
@@ -147,17 +156,18 @@ async def admin_scan(request:Request):
 
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: RedirectTTS):
-    is_redirect = await checkRedirectTTS(key=data.key, token=data.token)
+    is_redirect = await checkRedirectTTS(key=data.key, token=data.token) # checking if the given key and token is valid or not.
     # print(is_redirect)
-    if is_redirect:
-        is_expired = await checkTokenExpiry(token=data.token)
+    if is_redirect: # if key and token is valid
+        is_expired = await checkTokenExpiry(token=data.token) # checks if the token is expired
         if not is_expired:
-            redirect_data = {"token": data.token, "amount": data.amount}
+        
+            redirect_data = {"token": data.token, "amount": data.amount, "payment":data.payment} 
 
             idd = str(uuid.uuid4())
 
             file_path = "database/redirectTTS.json"
-            await update_json(file_path=file_path, key=idd, value=redirect_data)
+            await update_json(file_path=file_path, key=idd, value=redirect_data) # updating the json file.
             
             safe_url = quote(idd, safe="")
             
@@ -171,6 +181,7 @@ async def tts_payment(request: Request, response: Response, data: RedirectTTS):
             else:
                 response =  RedirectResponse(url=f"/", status_code=303)
                 return response
+            
         else:
             return JSONResponse(content={"success": False, "message": "Event Token is expired!"}, status_code=400)
     else:
@@ -260,6 +271,33 @@ async def verify_signature(request: Request):
     except razorpay.errors.SignatureVerificationError:
         return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
 
+@app.post("/nopay")
+async def noPaySubmit(request:Request, nopay:NoPay):
+    amount = request.session.get("session_amount")
+    token = request.session.get("token")
+    time = f"{ISTdate()} {ISTTime()}"
+    order_id = str(uuid.uuid4())
+    inserting_data = {
+        "name":nopay.name,
+        "email":nopay.email,
+        "phone":nopay.phone,
+        "amount":amount,
+        "attended":False,
+        "ticket_id":order_id,
+        "payment_id":None,
+        "signature":None,
+        "payment_time":time,
+        "attending_time":""
+    }
+    request.session["email"] = nopay.email
+    is_inserted = await insert_ticket(Data=inserting_data, collection_name=token, ticket_id=order_id)
+    await share_ticket(ticket=order_id, email=nopay.email)
+
+    if is_inserted:
+        return RedirectResponse(url = '/success/payment',  status_code=HTTP_303_SEE_OTHER)  # Redirect to success page
+    else:
+        # generate your own ticket_id
+        print("EROR")
 
 @app.post("/verify-ticket") # ticket validation via QR scannig
 async def verify_ticket(request:Request, ticket:Ticket):
