@@ -194,7 +194,49 @@ Once the user clicks the payment button:
 }
 ```
 
+## ScreenShots (Attendee POV)
+
+### Demo Site - Suppose this is the website which sends request on our website when clicked on send payment. <br>
+<img width="2560" height="1600" alt="Demosiite" src="https://github.com/user-attachments/assets/30344857-2717-4977-b1d4-1a5804efa03d" /> <br>
+### Payment Page - Attendee will see this page when he/she clicks on send payment.
+<img width="2560" height="2930" alt="attendeesPage" src="https://github.com/user-attachments/assets/b961f438-a8e9-4ec7-aa88-a3bd1f04399a" /> <br>
+### Razorpay Payment Integration (Test Version)
+<img width="2560" height="3200" alt="razaorPay payment gateway" src="https://github.com/user-attachments/assets/722e29c4-8db9-4fb4-9e0e-0bac07bcb71e" /> <br>
+### Success Message - After successful payment User will get this page. A message will be sent to the attendee's email with Ticket ID and Ticket Generation Link. 
+<img width="1575" height="913" alt="Screenshot 2025-11-10 190812" src="https://github.com/user-attachments/assets/ecd16ee9-b0cc-4dac-a683-1c4ecbab1fc4" /> <br>
+### Ticket Generation Email - You can copy your email and Click on generate ticket. 
+<img width="676" height="688" alt="Screenshot 2025-11-10 190914" src="https://github.com/user-attachments/assets/66a69ffe-46da-47d3-b3c3-22c318d7cf88" /> <br>
+### Ticket Generation - Enter your Ticket ID to generat your Ticket.
+<img width="2560" height="1770" alt="ticketGeneration page" src="https://github.com/user-attachments/assets/e0267bfe-fde7-4290-8aca-366fc06a5c00" /> <br>
+
+### Ticket - Your Generated Ticket will look like this.
+<img width="862" height="923" alt="Screenshot 2025-11-10 191042" src="https://github.com/user-attachments/assets/82344e4e-fde3-4abe-b0f9-e85bd4ef829e" /> <br>
+
+## Screenshots (Admin POV) 
+### Homepage - Landing Page for admins
+<img width="2560" height="6886" alt="home page" src="https://github.com/user-attachments/assets/0feeed9f-7d79-4cb7-a984-d36d83bda4e0" /> <br>
+
+### ADMIN Login
+<img width="2560" height="1600" alt="trendyticketservices onrender com_admin_login(Nest Hub Max)" src="https://github.com/user-attachments/assets/ff7c97c1-4824-49d7-a176-e52d688186e9" /> <br>
+### ADMIN SignUp
+<img width="2560" height="1600" alt="trendyticketservices onrender com_admin_signup(Nest Hub Max)" src="https://github.com/user-attachments/assets/ec7131fb-7bdf-41f0-8e52-fc4e24ee85b8" /> <br>
+### ADMIN Dashboard
+<img width="2560" height="1600" alt="admin dashboard" src="https://github.com/user-attachments/assets/64ba241c-3f1e-4158-9637-cd5bd3c14222" /> <br>
+### ADMIN Events
+<img width="2560" height="1600" alt="admin_event_section" src="https://github.com/user-attachments/assets/36e150a0-1d6b-4aee-bd3d-907b1fe5370f" /> <br>
+### ADMIN Security
+<img width="2560" height="1600" alt="admin_security_section" src="https://github.com/user-attachments/assets/a27a6008-0b51-4702-a832-377bceaa970d" /> <br>
+### ADMIN Host
+<img width="1688" height="2500" alt="admin_host" src="https://github.com/user-attachments/assets/cf0f419b-3911-470b-aa7c-c8d1c84ec18a" /> <br>
+### ADMIN Verification Before Scanning Tickets"
+<img width="2560" height="1600" alt="admin verification before scannning" src="https://github.com/user-attachments/assets/da5500ad-f5a6-4719-9ed6-a6f7200e4058" /> <br>
+### Ticket Verification
+<img width="1578" height="915" alt="Screenshot 2025-11-10 191522" src="https://github.com/user-attachments/assets/4e9284cc-28ab-4c36-8069-51d2797c04f0" /> <br>
+
 ---
+
+
+
 
 ## 📁 Project Structure
 
