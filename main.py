@@ -438,6 +438,8 @@ async def admin_events(request:Request, data:Useless):
     else:
         return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
 
+
+
 @app.post("/admin/ui/events/attendees")
 async def admin_event_attendees(request:Request, data:Useless):
     admin = request.cookies.get("session_user_admin")

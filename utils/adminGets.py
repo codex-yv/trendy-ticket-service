@@ -71,13 +71,14 @@ async def getAdminEvents(email:str):
         event_one_data["event_date"] = event_date
         event_one_data["total_tickets_sold"] = event["total_generated_tickets"]
         event_one_data["status"] = event["is_active"]
-
+        event_one_data["revenue"] = await getEventRevenue(token=event["event_token"])
         event_id = str(event["_id"])
 
         event_data_dict[event_id] = event_one_data
         event_data_list.append(event_data_dict)
         event_data_dict = {}
 
+    print(event_data_list)
 
     return event_data_list
 
@@ -179,3 +180,15 @@ async def checkTokenExpiry(token:str):
             else:
                 return True
         
+async def getEventRevenue(token:str):
+    db = client["Tickets"]
+    collection = db[token]
+
+    event_data = await collection.find({}, {"_id":0}).to_list(None)
+
+    revenue = 0
+    for event in event_data:
+        amount = event["amount"]
+        revenue+=amount
+    
+    return revenue

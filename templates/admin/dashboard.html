@@ -1074,6 +1074,13 @@
                     const statusText = isActive ? 'Active' : 'Inactive';
                     const iconGradient = isActive ? 'from-green-500 to-emerald-500' : 'from-gray-400 to-gray-600';
                     
+                    // Format revenue with currency symbol
+                    const revenue = eventInfo.revenue || 0;
+                    const formattedRevenue = new Intl.NumberFormat('en-IN', {
+                        style: 'currency',
+                        currency: 'INR'
+                    }).format(revenue);
+                    
                     eventElement.innerHTML = `
                         <div class="flex items-center space-x-4">
                             <div
@@ -1088,6 +1095,12 @@
                                             <i class="ri-ticket-line text-xs"></i>
                                         </div>
                                         <span>${eventInfo.total_tickets_sold} tickets sold</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-money-rupee-circle-line text-xs"></i>
+                                        </div>
+                                        <span>${formattedRevenue} revenue</span>
                                     </div>
                                     <div class="flex items-center space-x-1">
                                         <div class="w-4 h-4 flex items-center justify-center">
