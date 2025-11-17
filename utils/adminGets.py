@@ -78,7 +78,7 @@ async def getAdminEvents(email:str):
         event_data_list.append(event_data_dict)
         event_data_dict = {}
 
-    print(event_data_list)
+    # print(event_data_list)
 
     return event_data_list
 
