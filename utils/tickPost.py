@@ -16,18 +16,26 @@ async def insert_ticket(Data:dict, collection_name:str, ticket_id:str): # /see p
     insert_data = {
         collection_name: ticket_db_id
     }
-    await collection2.update_one({"_id": ObjectId(FixedObjectID.ticVer)}, {"$set":{"mapping": insert_data}})
+    ticmaps = await collection2.find({}, {}).to_list(None)
+    if ticmaps:
+        await collection2.update_one({"_id": ObjectId(ticmaps[0]["_id"])}, {"$set":{"mapping": insert_data}})
+    else:
+        await collection2.insert_one(insert_data)
 
-    value = await collection2.find({}, {"_id": 0}).to_list(None)
-    id_mapping = value[0]["id_mapping"]
-    try:
-        ticket_id_list = id_mapping[collection_name]
-        ticket_id_list.append(ticket_id)
-        id_mapping[collection_name] = ticket_id_list
-    except:
-        id_mapping[collection_name] = [ticket_id]
+    value = await collection2.find({}, {}).to_list(None)
+    if value:
+        id_mapping = value[0]["id_mapping"]
+        try:
+            ticket_id_list = id_mapping[collection_name]
+            ticket_id_list.append(ticket_id)
+            id_mapping[collection_name] = ticket_id_list
+        except:
+            id_mapping[collection_name] = [ticket_id]
 
-    await collection2.update_one({"_id": ObjectId(FixedObjectID.ticVer)}, {"$set":{"id_mapping": id_mapping}})
+        await collection2.update_one({"_id": ObjectId(value[0]["_id"])}, {"$set":{"id_mapping": id_mapping}})
+    else:
+        insert_id_map = {collection_name:[ticket_id]}
+        await collection2.insert_one(insert_id_map)
 
     await updateTicketGeneratedCount(collection_name)
     return True

@@ -64,57 +64,72 @@ async def deteleEvent(email:str, event_id:str):
     )
     db3 = client["Redirects"]
     collection3 = db3["secrets"]
-    tokens = (await collection3.find({}, {"_id": 0}).to_list(None))[0]["tokens"]
-    new_token = []
-    for token in tokens:
-        if token[0] != event_token:
-            new_token.append(token)
+    tokens = await collection3.find({}, {}).to_list(None)
+    if tokens:
+        current_token = tokens[0]["tokens"]
+        new_token = []
+        for token in current_token:
+            if token[0] != event_token:
+                new_token.append(token)
+            
         
-    
-    await collection3.update_one(
-        {"_id":ObjectId(FixedObjectID.redirect)},
-        {"$set": {"tokens": new_token}}
-    )
+        await collection3.update_one(
+            {"_id":ObjectId(tokens[0]["_id"])},
+            {"$set": {"tokens": new_token}}
+        )
 
     db4 = client["TicVer"]
     collection4 = db4["ticMaps"]
-    c4_result = await collection4.find({}, {"_id": 0}).to_list(None)
-    mapping = c4_result[0]["mapping"]
-    id_mapping = c4_result[0]["id_mapping"]
-    
-    if event_token in mapping:
-        del mapping[event_token]
-    if event_token in id_mapping:
-        del id_mapping[event_token]
-    
-    await collection4.update_one(
-        {"_id":ObjectId(FixedObjectID.ticVer)},
-        {"$set": {"mapping": mapping, "id_mapping": id_mapping}}
-    )
+    c4_result = await collection4.find({}, {}).to_list(None)
+    if c4_result:
+        mapping = c4_result[0]["mapping"]
+        id_mapping = c4_result[0]["id_mapping"]
+        
+        if event_token in mapping:
+            del mapping[event_token]
+        if event_token in id_mapping:
+            del id_mapping[event_token]
+        
+        await collection4.update_one(
+            {"_id":ObjectId(c4_result[0]["_id"])},
+            {"$set": {"mapping": mapping, "id_mapping": id_mapping}}
+        )
+
     
     
 async def updateRedirect(token:str, email:str):
     db = client["Redirects"]
     collection = db["secrets"]
-    tokens = (await collection.find({}, {"_id": 0}).to_list(None))[0]["tokens"]
-    new_tokens = [token, email]
-    tokens.append(new_tokens)
-    await collection.update_one(
-        {"_id":ObjectId(FixedObjectID.redirect)},
-        {"$set": {"tokens": tokens}}
-    )
+
+    # tokens = (await collection.find({}, {"_id": 0}).to_list(None))[0]["tokens"]
+    tokens = await collection.find({}, {}).to_list(None)
+    if tokens:
+        new_tokens = [token, email]
+        current_tokens = tokens[0]["tokens"]
+        current_tokens.append(new_tokens)
+        await collection.update_one(
+            {"_id":ObjectId(tokens[0]["_id"])},
+            {"$set": {"tokens": current_tokens}}
+        )
+    else:
+        token_dict = {"tokens":[token, email]}
+        await collection.insert_one(token_dict)
 
 async def updateRedirectKeys(key:str):
     db = client["Redirects"]
     collection = db["secrets"]
-    keys = (await collection.find({}, {"_id": 0}).to_list(None))[0]["keys"]
-
-    keys.append(key)
-    await collection.update_one(
-        {"_id":ObjectId(FixedObjectID.redirect)},
-        {"$set": {"keys": keys}}
-    )
-
+    # keys = (await collection.find({}, {"_id": 0}).to_list(None))[0]["keys"]
+    keys = await collection.find({}, {"_id": 0}).to_list(None)
+    if keys:
+        current_keys = keys[0]["keys"]
+        current_keys.append(key)
+        await collection.update_one(
+            {"_id":ObjectId(keys[0]["_id"])},
+            {"$set": {"keys": current_keys}}
+        )
+    else:
+        keys_dict = {"keys":[key]}
+        await collection.insert_one(keys_dict)
     
     
 
@@ -181,14 +196,23 @@ async def updateActiveEventsCounts(email:str):
                     {"$set":{"is_active":False}}
                 )
     
-                db3 = client["Clients"]
-                collection3 = db3[email]
-                await collection3.update_one(
-                    {"email":email},
-                    {"$inc":{"total_active_events":-1}}
-                )
             else:
                 pass
         else:
             pass
+
+        db3 = client["Clients"]
+        collection3 = db3[email]
+
+        total_active_events = 0
+
+        for active_event in event_data:
+            if active_event["is_active"]:
+                total_active_events+=1
+
+        await collection3.update_one(
+            {"email":email},
+            {"$set":{"total_active_events":total_active_events}}
+        )
+    
 

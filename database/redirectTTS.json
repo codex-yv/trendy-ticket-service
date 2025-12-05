@@ -1,42 +1,22 @@
 {
-    "eaa00630-5add-48c0-b8c0-49cfd1916a11": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
-        "amount": 100.0,
-        "payment": false
-    },
-    "4721f149-c503-45a3-b8b6-e2c67dfbdbb0": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
+    "2f331c70-f5d6-4cb5-9165-7b79b6112f03": {
+        "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
         "amount": 200.0,
-        "payment": false
+        "payment": true
     },
-    "acdcd017-7dd9-4508-802c-4233d6487967": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
+    "c3ccc1d8-e884-4739-9da6-9fff506776cc": {
+        "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
+        "amount": 200.0,
+        "payment": true
+    },
+    "2c784ac7-d2ca-4d90-8a86-4a0ae5bc604e": {
+        "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
+        "amount": 200.0,
+        "payment": true
+    },
+    "d72f03bf-55df-44e5-941d-5a24ce9267db": {
+        "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
         "amount": 100.0,
-        "payment": false
-    },
-    "8f2746f7-a38b-4d90-b08b-acea058a4c12": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
-        "amount": 100.0,
-        "payment": false
-    },
-    "aa0d8433-3553-4d8a-b071-891254ef3287": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
-        "amount": 230.0,
-        "payment": false
-    },
-    "bd4d262e-a903-4c8b-93e8-a7d42f47e126": {
-        "token": "55e839c6-0183-4e0b-91c5-9abb93098daf",
-        "amount": 120.0,
-        "payment": false
-    },
-    "5d7f1730-f268-4dec-aa51-5e6cbfad1beb": {
-        "token": "4bed6488-8715-4487-a411-038c6f1e0854",
-        "amount": 120.0,
-        "payment": false
-    },
-    "233a279c-bb06-436f-827e-4f83ecd755d2": {
-        "token": "4bed6488-8715-4487-a411-038c6f1e0854",
-        "amount": 120.0,
-        "payment": false
+        "payment": true
     }
 }
