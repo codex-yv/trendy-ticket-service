@@ -104,13 +104,17 @@ async def updateRedirect(token:str, email:str):
     # tokens = (await collection.find({}, {"_id": 0}).to_list(None))[0]["tokens"]
     tokens = await collection.find({}, {}).to_list(None)
     if tokens:
-        new_tokens = [token, email]
-        current_tokens = tokens[0]["tokens"]
-        current_tokens.append(new_tokens)
-        await collection.update_one(
-            {"_id":ObjectId(tokens[0]["_id"])},
-            {"$set": {"tokens": current_tokens}}
-        )
+        try:
+            new_tokens = [token, email]
+            current_tokens = tokens[0]["tokens"]
+            current_tokens.append(new_tokens)
+            await collection.update_one(
+                {"_id":ObjectId(tokens[0]["_id"])},
+                {"$set": {"tokens": current_tokens}}
+            )
+        except KeyError:
+            token_dict = {"tokens":[token, email]}
+            await collection.insert_one(token_dict)
     else:
         token_dict = {"tokens":[token, email]}
         await collection.insert_one(token_dict)

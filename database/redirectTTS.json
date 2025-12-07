@@ -18,5 +18,10 @@
         "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
         "amount": 100.0,
         "payment": true
+    },
+    "35d61f0f-0473-4116-95bb-51557adb3dc2": {
+        "token": "75d4d32a-3c86-4c1a-852a-926fa9cf3fc1",
+        "amount": 200.0,
+        "payment": true
     }
 }

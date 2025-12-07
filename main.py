@@ -189,7 +189,6 @@ async def tts_payment(request: Request, response: Response, data: RedirectTTS):
 
 @app.post("/send-otp")
 async def send_OTP(request:Request, email:Email = Body(...)):
-    print(email.email)
     sended_otp = await send_otp(email=email.email)
     request.session["otp"] = sended_otp
     return JSONResponse(content={"success": True, "message": f"OTP sent to {email.email}"})
