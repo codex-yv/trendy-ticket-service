@@ -20,7 +20,11 @@ async def insert_ticket(Data:dict, collection_name:str, ticket_id:str): # /see p
     if ticmaps:
         await collection2.update_one({"_id": ObjectId(ticmaps[0]["_id"])}, {"$set":{"mapping": insert_data}})
     else:
-        await collection2.insert_one(insert_data)
+        insert_format = {
+            "mapping":insert_data,
+            "id_mapping":{}
+        }
+        await collection2.insert_one(insert_format)
 
     value = await collection2.find({}, {}).to_list(None)
     if value:

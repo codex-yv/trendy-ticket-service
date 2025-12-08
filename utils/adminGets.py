@@ -28,24 +28,28 @@ async def getAdminDashboardData(email:str):
     collection = db[email]
     admin_data = await collection.find({}, {"_id": 0}).to_list(None)
     recent_event = []
-    admin_data_dict ={
-        "total_events": admin_data[0]["total_events"],
-        "total_active_events": admin_data[0]["total_active_events"],
-        "total_attendies": admin_data[0]["total_attendies"],
-        "recent_events": recent_event
-    }
-    if admin_data[0]["total_events"] > 0:
-        event_collection = db2[email]
-        event_data = (await event_collection.find({}, {"_id": 0}).to_list(None))[::-1][0:3]
-        total_events = len(event_data)
-        for event in range(0, total_events):
-            evnt_date = f"{event_data[event]['start_date']} - {event_data[event]['end_date']}"
-            recent_event_info = [event_data[event]["event_name"], evnt_date, event_data[event]["total_attendies"]]
-            recent_event.append(recent_event_info)
-    else:
-        recent_event = []
+    try:
+        admin_data_dict ={
+            "total_events": admin_data[0]["total_events"],
+            "total_active_events": admin_data[0]["total_active_events"],
+            "total_attendies": admin_data[0]["total_attendies"],
+            "recent_events": recent_event
+        }
+        if admin_data[0]["total_events"] > 0:
+            event_collection = db2[email]
+            event_data = (await event_collection.find({}, {"_id": 0}).to_list(None))[::-1][0:3]
+            total_events = len(event_data)
+            for event in range(0, total_events):
+                evnt_date = f"{event_data[event]['start_date']} - {event_data[event]['end_date']}"
+                recent_event_info = [event_data[event]["event_name"], evnt_date, event_data[event]["total_attendies"]]
+                recent_event.append(recent_event_info)
+        else:
+            recent_event = []
                 
-    return admin_data_dict
+        return admin_data_dict
+    except IndexError:
+        return {}
+
 
         
 async def getAdminSecurityData(email:str):
