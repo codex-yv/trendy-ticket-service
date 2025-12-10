@@ -123,16 +123,16 @@ async def updateRedirectKeys(key:str):
     db = client["Redirects"]
     collection = db["secrets"]
     # keys = (await collection.find({}, {"_id": 0}).to_list(None))[0]["keys"]
-    keys = await collection.find({}, {"_id": 0}).to_list(None)
+    keys = await collection.find({}, {}).to_list(None)
     if keys:
         current_keys = keys[0]["keys"]
         current_keys.append(key)
         await collection.update_one(
             {"_id":ObjectId(keys[0]["_id"])},
-            {"$set": {"keys": current_keys}}
+            {"$set": {"keys": current_keys, "tokens":[]}}
         )
     else:
-        keys_dict = {"keys":[key]}
+        keys_dict = {"keys":[key], "tokens":[]}
         await collection.insert_one(keys_dict)
     
     

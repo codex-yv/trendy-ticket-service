@@ -8,6 +8,10 @@ async def createNewAdmin(admin_data:object):
     db = client["Clients"]
     collection = db[admin_data.email]
     key_id = str(uuid.uuid4())
+
+    self_paid = True
+    if admin_data.razorpay_key_id:
+        self_paid = False
     await collection.insert_one({
         "fullname": admin_data.fullname,
         "email": admin_data.email,
@@ -18,9 +22,12 @@ async def createNewAdmin(admin_data:object):
         "total_events": 0,
         "total_active_events": 0,
         "total_attendies": 0,
+        "razorpay_key_secret":admin_data.razorpay_key_secret,
+        "razorpay_key_id":admin_data.razorpay_key_id,
+        "self_paid":self_paid,
         "created_at": f"{ISTdate()} {ISTTime()}",
         "logged_out": f"{ISTdate()} {ISTTime()}",
-        "is_active": False,
+        "is_active": True,
     })
 
     await updateRedirectKeys(key = key_id)

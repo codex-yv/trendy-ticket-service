@@ -10,6 +10,8 @@ class Signup(BaseModel):
     password: str
     phone: str
     otp: str
+    razorpay_key_id:str
+    razorpay_key_secret:str
 
 class OTP(BaseModel):
     email:str

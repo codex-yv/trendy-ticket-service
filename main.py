@@ -154,6 +154,14 @@ async def ticket_verification_page(request:Request):
 async def admin_scan(request:Request):
     return templates.TemplateResponse("adminscanverification.html", {"request":request})
 
+@app.get("/tnc/view")
+async def show_tnc(request:Request):
+    return templates_admin.TemplateResponse("tnc.html", {"request":request})
+
+@app.get("/integration/docs")
+async def show_docs(request:Request):
+    return templates_admin.TemplateResponse("integrationdocs.html", {"request":request})
+
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: RedirectTTS):
     is_redirect = await checkRedirectTTS(key=data.key, token=data.token) # checking if the given key and token is valid or not.
@@ -367,18 +375,23 @@ async def admin_signup(request:Request):
     return templates_admin.TemplateResponse("signup.html", {"request":request})
 
 @app.get("/admin/dashboard")
-async def admin_dashboard(request:Request):
+async def admin_dashboard(request:Request, response:Response):
     admin = request.cookies.get("session_user_admin")
     # print(admin)
     if admin:
         await updateActiveEventsCounts(email=admin)
         admin_dashboard_data = await getAdminDashboardData(email=admin)
-        totoal_active_events = admin_dashboard_data["total_active_events"]
-        total_events = admin_dashboard_data["total_events"]
-        total_users = admin_dashboard_data["total_attendies"]
-        recent_events = admin_dashboard_data["recent_events"]
+        if admin_dashboard_data:
+            totoal_active_events = admin_dashboard_data["total_active_events"]
+            total_events = admin_dashboard_data["total_events"]
+            total_users = admin_dashboard_data["total_attendies"]
+            recent_events = admin_dashboard_data["recent_events"]
 
-        return templates_admin.TemplateResponse("dashboard.html", {"request":request, "recent_events":recent_events, "total_events":total_events, "total_users":total_users, "totoal_active_events":totoal_active_events})
+            return templates_admin.TemplateResponse("dashboard.html", {"request":request, "recent_events":recent_events, "total_events":total_events, "total_users":total_users, "totoal_active_events":totoal_active_events})
+        else:
+            resp = RedirectResponse(url='/', status_code=HTTP_303_SEE_OTHER)
+            resp.delete_cookie("session_user_admin")  # add path="/" if needed
+            return resp
     else:
         return RedirectResponse(url = '/admin/login',  status_code=HTTP_303_SEE_OTHER)
 
