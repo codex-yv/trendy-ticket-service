@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>API Documentation & Integration | Trendy Ticket Service</title>
+<link rel="icon" href="data:,">
+<style>
+  /* Dark theme */
+  :root{
+    --bg:#0b0f12;
+    --card:#0f1720;
+    --muted:#9aa4ad;
+    --accent:#2dd4bf;
+    --accent-2:#60a5fa;
+    --accent-3:#f472b6;
+    --glass: rgba(255,255,255,0.03);
+    --mono: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    /* Syntax highlighting colors */
+    --keyword:#ff6b6b;
+    --func:#61d4a5;
+    --string:#9be3d8;
+    --number:#7ac4ff;
+    --comment:#6c7a84;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:var(--mono);
+    background: linear-gradient(180deg, var(--bg), #071018 120%);
+    color:#e6eef3;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    max-width:1100px;
+    margin:32px auto;
+    padding:28px;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:18px;
+  }
+  .logo {
+    width:54px;
+    height:54px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    color:#021018;
+    box-shadow:0 8px 30px rgba(16,24,40,0.6);
+  }
+  h1{margin:0;font-size:20px}
+  p.lead{margin:4px 0 0;color:var(--muted)}
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:18px;
+    margin:16px 0;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:18px;
+  }
+  pre.code {
+    background: linear-gradient(180deg, rgba(8,12,16,0.6), rgba(8,12,16,0.35));
+    border-radius:8px;
+    padding:14px;
+    overflow:auto;
+    font-size:13px;
+    color:#d6f8ef;
+    border: 1px solid rgba(255,255,255,0.03);
+    position: relative;
+  }
+  /* colorful code text using gradient clipping */
+  pre.code code {
+    display:block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+    white-space: pre;
+    background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* fallback */
+  }
+  code.inline{background:var(--glass);padding:2px 6px;border-radius:6px;color:var(--accent-2)}
+  h2{color:var(--accent-2);margin-top:2px}
+  ul{color:var(--muted)}
+  .btn{
+    display:inline-flex;gap:8px;align-items:center;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#021018;padding:10px 14px;border-radius:8px;font-weight:600;border:none;
+    cursor:pointer;text-decoration:none;
+  }
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05); color:var(--muted)}
+  .section-title{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .example-box{background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+  .muted{color:var(--muted);font-size:13px}
+  .foot{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+  .btn-copy{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    background:linear-gradient(90deg,#071425, rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.04);
+    color:var(--muted);
+    padding:8px 10px;
+    border-radius:8px;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .btn-copy svg{display:block}
+  .copy-toast{
+    position:absolute;
+    right:12px;
+    top:12px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#021018;
+    padding:6px 10px;
+    border-radius:8px;
+    font-weight:700;
+    font-size:13px;
+    display:none;
+    align-items:center;
+    gap:8px;
+    z-index:20;
+  }
+  /* toolbar above code */
+  .code-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px}
+  .code-actions{display:flex;gap:8px;align-items:center}
+  .label{font-weight:700;color:var(--accent-2);font-size:14px}
+  .small-muted{font-size:13px;color:var(--muted)}
+  /* colorful border for the code card */
+  .color-border {
+    border-radius:10px;
+    padding:2px;
+    background: linear-gradient(90deg, rgba(96,165,250,0.12), rgba(45,212,191,0.12), rgba(244,114,182,0.08));
+  }
+  /* Editor-style code block */
+  .editor-container {
+    border-radius:10px;
+    background:linear-gradient(180deg, rgba(3,6,10,0.9), rgba(8,12,16,0.85));
+    padding:2px;
+    border:1px solid rgba(255,255,255,0.03);
+    box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    margin-top:16px;
+  }
+  .editor-content {
+    padding:12px;
+  }
+  .editor-toolbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+  }
+  .editor-label {
+    font-weight:700;
+    color:var(--accent);
+    font-size:13px;
+  }
+  .editor-subtitle {
+    color:var(--muted);
+    font-size:13px;
+  }
+  .code-editor {
+    margin:0;
+    padding:14px;
+    border-radius:8px;
+    background:linear-gradient(180deg, rgba(8,10,12,0.72), rgba(6,7,9,0.6));
+    overflow:auto;
+    color:#d7e6ef;
+    font-size:14px;
+    line-height:1.6;
+    white-space:pre-wrap;
+    word-break:normal;
+    font-family:'Fira Code','Roboto Mono',ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;
+    border:1px solid rgba(255,255,255,0.03);
+    position:relative;
+  }
+  .code-gutter {
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:6px;
+    background:linear-gradient(180deg, rgba(96,165,250,0.18), rgba(45,212,191,0.12));
+    border-top-left-radius:8px;
+    border-bottom-left-radius:8px;
+  }
+  /* small screens */
+  @media (max-width:980px){
+    .grid{grid-template-columns:1fr; }
+    .logo{width:46px;height:46px}
+  }
+  /* helper */
+  .kbd{background:#07141a;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.02);font-family:monospace}
+  .note{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;border-left:4px solid var(--accent);color:var(--muted)}
+  /* copy icon transitions */
+  .icon {
+    width:16px;height:16px;display:inline-block;vertical-align:middle;
+  }
+  .icon.check { display:none; }
+  .btn-copy.copied .icon.copy { display:none; }
+  .btn-copy.copied .icon.check { display:inline-block; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">T</div>
+      <div>
+        <h1>Trendy Ticket Service — API Docs & Integration</h1>
+        <p class="lead">Quick integration guide: obtain API Key & Event Token, attach payment/generate buttons, and process payments or issue tickets.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+
+      <!-- LEFT: docs -->
+      <main>
+        <div class="card">
+          <div class="section-title">
+            <h2>Getting Started</h2>
+            <span class="muted">FastAPI-ready examples included</span>
+          </div>
+
+          <h3>1) Create an account & generate API Key</h3>
+          <ul>
+            <li>Sign up on the dashboard (e.g., <span class="kbd">/signup</span>).</li>
+            <li>After login, go to <strong>Developer / API Keys</strong> and click <em>Generate API Key</em>.</li>
+            <li>Copy your <code class="inline">API_KEY</code> and keep it secret. Use it in the <code>Authorization</code> header for server → API calls.</li>
+          </ul>
+
+          <p class="muted">You can also create keys programmatically (example below).</p>
+
+          <h3>2) Create an Event & get Event Token</h3>
+          <ul>
+            <li>From the dashboard, click <em>Create Event</em> and fill event details (name, date, capacity, price rules).</li>
+            <li>The server returns an <code class="inline">event_token</code> for the event — use it on the frontend or server when processing payments or generating tickets.</li>
+          </ul>
+
+          <div class="note" style="margin-top:12px">
+            <strong>Security note:</strong> Never expose your <code class="inline">API_KEY</code> in frontend code. Send API_KEY from your server when creating events or generating server-to-server tokens. Frontend may use <code class="inline">event_token</code> which has limited scope.
+          </div>
+        </div>
+
+        <!-- Integration -->
+        <div class="card" style="margin-top:16px">
+          <div class="section-title">
+            <h2>Integration — Attach Payment / Generate Buttons</h2>
+            <span class="muted">No input tag required — amount sourced from button <code class="inline">data-amount</code></span>
+          </div>
+
+          <p>Place one or more buttons anywhere on your site using the class <code class="inline">tt-pay-btn</code> or <code class="inline">tt-generate-btn</code>. Each button should have <code>data-amount</code> (INR/units) and <code>data-event</code> attributes.</p>
+
+          <h4>HTML (example)</h4>
+          <pre class="code" style="color:#bfeee6;background:linear-gradient(180deg, rgba(6,10,14,0.6), rgba(6,10,14,0.45));">
+// payment button (reads amount from data-amount)
+&lt;button class="btn tt-pay-btn" data-amount="500" data-event="evt_tok_XYZ"&gt;Pay ₹500&lt;/button&gt;
+
+&lt;!-- generate ticket (server will create ticket without processing payment) --&gt;
+&lt;button class="btn.ghost tt-generate-btn" data-amount="0" data-event="evt_tok_XYZ"&gt;Generate Free Ticket&lt;/button&gt;
+          </pre>
+
+          <h4>Integration Script (copy)</h4>
+          <p class="muted">Replace <code>YOUR_API_HOST</code> with your backend (server-side) base URL. Put this script near the end of your page or bundle it.</p>
+
+          <!-- NEW EDITOR-STYLE CODE BLOCK -->
+          <div class="editor-container">
+            <div class="editor-content">
+              <!-- Toolbar -->
+              <div class="editor-toolbar">
+                <div>
+                  <div class="editor-label">Integration Script</div>
+                  <div class="editor-subtitle">Use this exact script in your frontend (no modifications).</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <button class="btn-copy" id="copy-btn-new" title="Copy script to clipboard">
+                    <!-- copy icon -->
+                    <svg class="icon copy" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16 21H8a2 2 0 0 1-2-2V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      <rect x="9" y="3" width="11" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                    </svg>
+                    <!-- check icon -->
+                    <svg class="icon check" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span id="copy-text-new">Copy</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Toast -->
+              <div id="copy-toast-new" style="position:absolute;right:16px;top:12px;background:var(--accent);color:#021018;padding:6px 8px;border-radius:8px;font-weight:700;font-size:13px;display:none;z-index:20;">Copied!</div>
+
+              <!-- Code block with syntax highlighting -->
+              <div style="position:relative">
+                <pre class="code-editor" id="integration-script-new">
+<span style="color:var(--keyword);">async</span> <span style="color:var(--keyword);">function</span> <span style="color:var(--func);">sendPayment</span>() {
+  <span style="color:var(--keyword);">const</span> amount = document.getElementById(<span style="color:var(--string);">"amount"</span>).value;
+  <span style="color:var(--keyword);">const</span> token = <span style="color:var(--string);">"YOUR_EVENT_TOKEN"</span>  <span style="color:var(--comment);font-style:italic;">// Replace with your Event Token</span>
+  <span style="color:var(--keyword);">const</span> key = <span style="color:var(--string);">"YOUR_API_KEY"</span>        <span style="color:var(--comment);font-style:italic;">// Replace with your API Key</span>
+
+  <span style="color:var(--keyword);">if</span> (!amount || amount &lt;= <span style="color:var(--number);">0</span>) {
+    alert(<span style="color:var(--string);">"Please enter a valid amount"</span>);
+    <span style="color:var(--keyword);">return</span>;
+  }
+
+  <span style="color:var(--keyword);">try</span> {
+    <span style="color:var(--keyword);">const</span> response = await fetch(<span style="color:var(--string);">"https://trendyticketservices.onrender.com/payment"</span>, {
+      method: <span style="color:var(--string);">"POST"</span>,
+      headers: { 
+        <span style="color:var(--string);">"Content-Type"</span>: <span style="color:var(--string);">"application/json"</span>,
+        <span style="color:var(--string);">"Accept"</span>: <span style="color:var(--string);">"application/json"</span>  <span style="color:var(--comment);font-style:italic;">// ✅ This tells backend to return JSON</span>
+      },
+      body: JSON.stringify({
+        amount: parseFloat(amount),
+        payment: <span style="color:var(--keyword);">true</span>,  <span style="color:var(--comment);font-style:italic;">// true if you want payment processed on our website</span>
+        token: token,
+        key: key
+      }),
+    });
+
+    <span style="color:var(--keyword);">const</span> data = await response.json();
+    
+    <span style="color:var(--keyword);">if</span> (data.success &amp;&amp; data.redirect_url) {
+      <span style="color:var(--comment);font-style:italic;">// Navigate to the payment page</span>
+      window.location.href = <span style="color:var(--string);">"https://trendyticketservices.onrender.com"</span> + data.redirect_url;
+    } <span style="color:var(--keyword);">else</span> {
+      alert(<span style="color:var(--string);">"Payment request failed. Please try again."</span>);  
+      <span style="color:var(--comment);font-style:italic;">// This message appears if your event token or API key is incorrect</span>
+    }
+  } <span style="color:var(--keyword);">catch</span> (error) {
+    console.error(<span style="color:var(--string);">"Error:"</span>, error);
+    alert(<span style="color:var(--string);">"Payment request failed. Please try again."</span>);
+  }
+}</pre>
+                <!-- Left gutter accent -->
+                <div class="code-gutter"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="note" style="margin-top:10px">
+            <strong>Where amount can come from</strong>
+            <ul class="muted">
+              <li>Hard-coded <code>data-amount</code> on each button (recommended for fixed-price items).</li>
+              <li>Selected price option on page (read from a selected card / dropdown) and set <code>data-amount</code> dynamically before click.</li>
+              <li>Computed value (e.g., quantity × price) — programmatically set <code>data-amount</code> or call <code>sendPayment</code> with computed amount.</li>
+            </ul>
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- RIGHT: quick reference -->
+      <aside>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Security checklist</h3>
+          <ul class="muted">
+            <li>Do not embed <code>API_KEY</code> in JS served to clients.</li>
+            <li>Use server to call payment gateway (Razorpay) with secret keys.</li>
+            <li>Event token should be short-lived / scoped to a single event.</li>
+            <li>Use HTTPS for all endpoints.</li>
+          </ul>
+        </div>
+
+      </aside>
+
+    </div>
+
+    <div class="foot">
+      © 2025 Trendy Ticket Service — Documentation & Integration • Email: <a href="mailto:yourajverma960@gmail.com" style="color:var(--accent)">yourajverma960@gmail.com</a>
+    </div>
+  </div>
+
+  <!-- OPTIONAL: small live demo buttons for testing -->
+  <div style="position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:10px;">
+    <button class="btn tt-pay-btn" data-amount="499" data-event="demo_evt_tok">Pay ₹499 (Demo)</button>
+    <button class="btn.ghost tt-generate-btn" data-amount="0" data-event="demo_evt_tok">Generate Free Ticket (Demo)</button>
+  </div>
+
+  <!-- demo handlers + copy button logic -->
+  <script>
+    // demo handlers (same as before)
+    document.querySelectorAll(".tt-pay-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const amount = Number(btn.getAttribute("data-amount")||0);
+        const event = btn.getAttribute("data-event");
+        console.log("Demo pay clicked:", {amount,event});
+        alert("Demo: would initiate payment for ₹" + amount + " (event_token: " + event + ")");
+      });
+    });
+    document.querySelectorAll(".tt-generate-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const amount = Number(btn.getAttribute("data-amount")||0);
+        const event = btn.getAttribute("data-event");
+        console.log("Demo generate clicked:", {amount,event});
+        alert("Demo: would request server to generate ticket for event: " + event);
+      });
+    });
+
+    // OLD COPY button functionality (if still needed elsewhere)
+    (function() {
+      const copyBtn = document.getElementById("copy-btn");
+      const copyText = document.getElementById("integration-script");
+      const toast = document.getElementById("copy-toast");
+      const copyLabel = document.getElementById("copy-text");
+
+      if (copyBtn && copyText) {
+        async function doCopy() {
+          try {
+            const text = copyText.innerText;
+            await navigator.clipboard.writeText(text);
+            copyBtn.classList.add("copied");
+            copyLabel.textContent = "Copied!";
+            toast.style.display = "flex";
+            setTimeout(() => {
+              copyBtn.classList.remove("copied");
+              copyLabel.textContent = "Copy";
+              toast.style.display = "none";
+            }, 2000);
+          } catch (err) {
+            alert("Copy failed. You can select the script and press Ctrl+C.");
+            console.error(err);
+          }
+        }
+        copyBtn.addEventListener("click", doCopy);
+      }
+    })();
+
+    // NEW copy button functionality for the integration script
+    (function() {
+      const copyBtnNew = document.getElementById('copy-btn-new');
+      const copyTextNew = document.getElementById('integration-script-new');
+      const toastNew = document.getElementById('copy-toast-new');
+      const copyLabelNew = document.getElementById('copy-text-new');
+
+      async function doCopyNew() {
+        try {
+          // Get the text content without HTML tags
+          const text = copyTextNew.textContent || copyTextNew.innerText;
+          await navigator.clipboard.writeText(text);
+          
+          // Visual feedback
+          copyBtnNew.classList.add('copied');
+          copyLabelNew.textContent = 'Copied!';
+          toastNew.style.display = 'block';
+          
+          setTimeout(() => {
+            copyBtnNew.classList.remove('copied');
+            copyLabelNew.textContent = 'Copy';
+            toastNew.style.display = 'none';
+          }, 2000);
+        } catch (err) {
+          alert('Copy failed. You can select the script and press Ctrl+C.');
+          console.error(err);
+        }
+      }
+
+      if (copyBtnNew) {
+        copyBtnNew.addEventListener('click', doCopyNew);
+      }
+    })();
+  </script>
+
+</body>
+</html>

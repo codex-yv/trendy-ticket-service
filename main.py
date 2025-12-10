@@ -154,6 +154,14 @@ async def ticket_verification_page(request:Request):
 async def admin_scan(request:Request):
     return templates.TemplateResponse("adminscanverification.html", {"request":request})
 
+@app.get("/tnc/view")
+async def show_tnc(request:Request):
+    return templates_admin.TemplateResponse("tnc.html", {"request":request})
+
+@app.get("/integration/docs")
+async def show_docs(request:Request):
+    return templates_admin.TemplateResponse("integrationdocs.html", {"request":request})
+
 @app.post("/payment")
 async def tts_payment(request: Request, response: Response, data: RedirectTTS):
     is_redirect = await checkRedirectTTS(key=data.key, token=data.token) # checking if the given key and token is valid or not.
